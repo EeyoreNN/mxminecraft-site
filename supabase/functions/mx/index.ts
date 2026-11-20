@@ -35,12 +35,32 @@ async function cfg(key: string) {
   const { data } = await db.from("app_config").select("value").eq("key", key).single();
   return data?.value as string;
 }
+const dash = (id: string) => id.includes("-") ? id : `${id.slice(0, 8)}-${id.slice(8, 12)}-${id.slice(12, 16)}-${id.slice(16, 20)}-${id.slice(20)}`;
+// Name -> {name, uuid}. Whitelisted names resolve locally; otherwise try several lookup services,
+// because Mojang rate-limits shared edge IPs. Returns null only when a service says "no such player";
+// throws when every service failed.
 async function mojang(name: string) {
-  const r = await fetch(`https://api.mojang.com/users/profiles/minecraft/${encodeURIComponent(name)}`);
-  if (r.status !== 200) return null;
-  const j = await r.json();
-  const id = j.id as string;
-  return { name: j.name as string, uuid: `${id.slice(0, 8)}-${id.slice(8, 12)}-${id.slice(12, 16)}-${id.slice(16, 20)}-${id.slice(20)}` };
+  const { data: wl } = await db.from("whitelist").select("uuid, name").ilike("name", name.replace(/_/g, "\\_")).maybeSingle();
+  if (wl) return { name: wl.name as string, uuid: wl.uuid as string };
+  const n = encodeURIComponent(name);
+  const sources: [string, (j: any) => { name: string; id: string }][] = [
+    [`https://api.minecraftservices.com/minecraft/profile/lookup/name/${n}`, (j) => ({ name: j.name, id: j.id })],
+    [`https://api.mojang.com/users/profiles/minecraft/${n}`, (j) => ({ name: j.name, id: j.id })],
+    [`https://playerdb.co/api/player/minecraft/${n}`, (j) => ({ name: j.data.player.username, id: j.data.player.id })],
+  ];
+  let notFound = false;
+  for (const [u, pick] of sources) {
+    try {
+      const r = await fetch(u, { headers: { "User-Agent": "mxminecraft.net" } });
+      if (r.status === 200) {
+        const p = pick(await r.json());
+        if (p?.id && p?.name) return { name: p.name, uuid: dash(p.id) };
+      }
+      if (r.status === 404 || r.status === 204 || r.status === 400) notFound = true;
+    } catch { /* try next */ }
+  }
+  if (notFound) return null;
+  throw new Error("lookup unavailable");
 }
 async function isWhitelisted(uuid: string) {
   const { data } = await db.from("whitelist").select("uuid").eq("uuid", uuid).maybeSingle();
