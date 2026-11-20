@@ -232,7 +232,7 @@ footer{border-top:1px solid var(--line);padding:22px 16px;color:var(--muted);fon
 const ADDR = 'mxminecraft.net';
 const API = 'https://bdsdvogepvkvfjdohkbo.supabase.co/functions/v1/mx';
 const $ = (id) => document.getElementById(id);
-let player = null, reqId = null, pollTimer = null, welcomeName = '';
+let player = null, reqId = null, pollTimer = null, welcomeName = '', skinSeq = 0;
 
 setInterval(() => $('clock').textContent = new Date().toISOString().slice(11, 19) + ' UTC', 1000);
 (async () => {
@@ -262,7 +262,7 @@ try {
   addEventListener('resize', () => viewer.setSize(c.clientWidth, c.clientHeight));
 } catch (e) { $('skin').style.display = 'none'; }
 
-let skinSeq = 0;
+
 async function loadSkin(uuid) {
   if (!viewer) return;
   const seq = ++skinSeq;  // ignore slower, stale loads
