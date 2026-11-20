@@ -20,23 +20,27 @@ const SESSION_DAYS = 30;
 const CONTENT = {
   address: "mxminecraft.net",
   version: "26.3",
-  season1: "2026-11-23T19:00:00-05:00",
+  season1: "2026-11-20T18:00:00-05:00",
   steps: [
     ["Open Minecraft: Java Edition", "Use the latest release (26.3). Bedrock (console, phone, Windows Store) can't join."],
     ["Add the server", "Go to Multiplayer, then Add Server, and enter mxminecraft.net. You don't need a port."],
     ["Join", "Double-click the server. If it says you're not whitelisted, your approval is still pending."],
   ],
   world: [
-    ["Fresh vanilla seed", "No mods, datapacks or custom terrain. The seed stays secret, so the map is yours to explore."],
-    ["20,000 × 20,000 blocks", "The Overworld is pregenerated 10,000 blocks out in every direction, so there's no chunk lag."],
+    ["Fresh random seed", "A brand-new vanilla world. Nobody has seen the seed, so everyone starts even."],
+    ["10,000 × 10,000 border", "The world border is 5,000 blocks out from spawn in every direction, and it's all pregenerated, so there's no chunk lag."],
     ["Nether ready", "The Nether is pregenerated too, which is good for fast travel and highways."],
-    ["The End", "No one has been there yet. The first expedition is up to the server."],
+    ["Recorded", "The server records gameplay (replays are kept for 14 days), so any dispute can be checked."],
   ],
   rules: [
-    ["Anarchy", "PvP is on. Griefing, raiding and stealing are all fair game, so protect your stuff."],
-    ["No cheats", "No x-ray, hacked clients, dupes or exploits. That's the one rule. Sodium, Iris and minimaps are fine."],
+    ["24h grace period", "PvP is off for the first 24 hours after Season 1 starts. It switches on automatically after that."],
+    ["Stealing is fair", "Looting is allowed. Secret or hidden bases are fair game, including griefing them."],
+    ["No griefing public builds", "Don't grief public builds like a town hall or a shared farm. Take what's hidden in them, but don't destroy them."],
+    ["Teams of 2 max", "Duos only for now."],
+    ["Cart PvP yes, crystals no", "TNT-minecart PvP is allowed. End crystal PvP is banned."],
+    ["Villagers", "Villagers you trapped yourself are yours to do with as you like. Public villagers and villages are off limits."],
+    ["No cheats", "No x-ray, hacked clients, dupes or exploits. The server runs an anticheat and anti-xray. Sodium, Iris and minimaps are fine."],
     ["No lag machines", "The server runs on a home PC. Don't build things meant to crash or lag it."],
-    ["MX only", "Access is personal. Don't share accounts. Friends can sign up themselves."],
   ],
 };
 

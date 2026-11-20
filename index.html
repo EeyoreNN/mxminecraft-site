@@ -142,7 +142,7 @@ footer{border-top:2px solid var(--line);padding:22px 16px;color:var(--muted);fon
 <main class="wrap hidden" id="member">
   <div class="toast" id="toast"></div>
 
-  <h3>SEASON 1 <span class="ps">PRE-SEASON OPEN</span></h3>
+  <h3>SEASON 1 <span class="ps">STARTS 6 PM ET</span></h3>
   <div class="cd"><div><b id="cdD">--</b><small>days</small></div><div><b id="cdH">--</b><small>hours</small></div><div><b id="cdM">--</b><small>min</small></div><div><b id="cdS">--</b><small>sec</small></div></div>
 
   <h3>HOW TO JOIN</h3>
@@ -280,6 +280,8 @@ async function enter(fresh) {
   const tick = () => {
     const t = Math.max(0, s1 - Date.now()) / 1000, z = (n) => String(Math.floor(n)).padStart(2, '0');
     $('cdD').textContent = z(t / 86400); $('cdH').textContent = z(t % 86400 / 3600); $('cdM').textContent = z(t % 3600 / 60); $('cdS').textContent = z(t % 60);
+
+    if (t === 0) { document.querySelector('h3 .ps').textContent = 'LIVE NOW'; }
   };
   tick(); cdTimer = setInterval(tick, 1000);
   clearInterval(pollTimer);
