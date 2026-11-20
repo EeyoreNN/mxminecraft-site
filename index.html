@@ -36,7 +36,7 @@ nav .links a:hover{color:var(--g)}
 
 .hero{display:grid;grid-template-columns:1.15fr .85fr;gap:28px;padding:44px 16px 30px;align-items:center}
 .boot{font-size:12px;color:var(--gdim);min-height:5.2em;white-space:pre-line}
-h1{font-family:Rajdhani;font-weight:700;font-size:clamp(44px,8vw,92px);line-height:.95;letter-spacing:.06em;margin:10px 0 6px;color:#eaffde;text-shadow:0 0 24px rgba(147,255,74,.25);overflow-wrap:anywhere}
+h1{font-family:Rajdhani;font-weight:700;font-size:clamp(38px,6.4vw,78px);line-height:.95;letter-spacing:.06em;margin:10px 0 6px;color:#eaffde;text-shadow:0 0 24px rgba(147,255,74,.25);overflow-wrap:anywhere}
 h1 .g{color:var(--g)}
 .sub{color:var(--muted);max-width:34em}
 .addr{margin-top:26px;display:flex;max-width:520px;border:1px solid var(--g2)}
@@ -311,10 +311,10 @@ async function loadSkin(uuid) {
     try {
       const r = await fetch(url); if (!r.ok) continue;
       const model = r.headers.get('X-Skin-Model') === 'slim' ? 'slim' : 'default';
-      const blob = URL.createObjectURL(await r.blob());
+      const img = new Image(); img.src = URL.createObjectURL(await r.blob()); await img.decode();
       if (seq !== skinSeq) return;
       if (uuid) $('coModel').textContent = model === 'slim' ? 'SLIM' : 'CLASSIC';
-      await viewer.loadSkin(blob, { model }); return;
+      viewer.loadSkin(img, { model }); return;
     } catch {}
   }
 }
@@ -350,18 +350,18 @@ function speak(lines, interrupt = true) {
 async function nextSub() {
   if (!subQ.length) { subBusy = false; return; }
   subBusy = true; const gen = subGen;
-  const line = subQ.shift(), el = $('sub'); el.textContent = '';
+  let line = subQ.shift(); if (typeof line === 'function') line = line(); const el = $('sub'); el.textContent = '';
   for (const ch of line) { if (gen !== subGen) return; el.textContent += ch; await new Promise(r => setTimeout(r, 22)); }
   await new Promise(r => setTimeout(r, 2600));
   if (gen === subGen) nextSub();
 }
 function idleLines() {
-  const t = Math.max(0, SEASON1 - Date.now()), d = Math.floor(t / 864e5), h = Math.floor(t % 864e5 / 36e5);
-  const pl = $('sPl').textContent, on = $('sOn').textContent;
   return [
     'Systems online. Awaiting operator identification.',
-    on === 'ONLINE' ? `Uplink stable. ${pl.split('/')[0]} of ${pl.split('/')[1] || '12'} personnel currently deployed.` : 'Server uplink is offline. Stand by.',
-    t ? `Pre-season is open. Season 1 launches in ${d} days, ${h} hours.` : 'Season 1 is live. Good hunting.',
+    () => { const pl = $('sPl').textContent.split('/'), on = $('sOn').textContent;
+      return on === 'ONLINE' ? `Uplink stable. ${pl[0]} of ${pl[1]} personnel currently deployed.` : on === 'OFFLINE' ? 'Server uplink is offline. Stand by.' : 'Establishing server uplink...'; },
+    () => { const t = Math.max(0, SEASON1 - Date.now()), d = Math.floor(t / 864e5), h = Math.floor(t % 864e5 / 36e5);
+      return t ? `Pre-season is open. Season 1 launches in ${d} days, ${h} hours.` : 'Season 1 is live. Good hunting.'; },
     'Enter your callsign below to request clearance.',
   ];
 }
