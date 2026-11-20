@@ -74,6 +74,12 @@ h1 .g{color:var(--g)}
 .frame .tl{top:10px;left:14px} .frame .br{bottom:10px;right:14px;text-align:right}
 .frame .br b{display:block;font-size:16px;color:#eaffde}
 
+.cd{margin-top:22px;max-width:520px;border:1px solid var(--amber);background:rgba(255,182,39,.04)}
+.cd .top{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-bottom:1px solid rgba(255,182,39,.35);font-size:11px;letter-spacing:.2em}
+.cd .top .ps{color:#071006;background:var(--amber);padding:2px 8px;font-weight:800}
+.cd .nums{display:grid;grid-template-columns:repeat(4,1fr);text-align:center;padding:10px 4px}
+.cd .nums b{display:block;font-family:Rajdhani;font-size:clamp(28px,6vw,40px);line-height:1;color:var(--amber);text-shadow:0 0 14px rgba(255,182,39,.35)}
+.cd .nums small{font-size:10px;letter-spacing:.2em;color:var(--muted)}
 main{padding:10px 16px 60px}
 section{margin-top:46px}
 .sh{display:flex;align-items:baseline;gap:14px;border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:18px;flex-wrap:wrap}
@@ -139,6 +145,10 @@ footer{border-top:1px solid var(--line);padding:22px 16px;color:var(--muted);fon
       <div><small>PERSONNEL</small><b id="sPl">--/--</b></div>
       <div><small>BUILD</small><b id="sVer">----</b></div>
       <div><small>MODE</small><b>VANILLA</b></div>
+    </div>
+    <div class="cd">
+      <div class="top"><span class="ps">PRE-SEASON: OPEN</span><span class="a" id="cdLbl">SEASON 1 LAUNCH IN</span></div>
+      <div class="nums"><div><b id="cdD">--</b><small>DAYS</small></div><div><b id="cdH">--</b><small>HRS</small></div><div><b id="cdM">--</b><small>MIN</small></div><div><b id="cdS">--</b><small>SEC</small></div></div>
     </div>
   </div>
   <div class="frame">
@@ -229,6 +239,17 @@ setInterval(() => $('clock').textContent = new Date().toISOString().slice(11, 19
   const lines = ['> INIT MX-ACCESS-TERMINAL v26.3', '> SECURE LINK ........ ESTABLISHED', '> WHITELIST DATABASE .. ONLINE', '> AWAITING OPERATOR IDENT_'];
   for (const l of lines) { for (const ch of l) { $('boot').textContent += ch; await new Promise(r => setTimeout(r, 12)); } $('boot').textContent += '\n'; }
 })();
+
+// Season 1 countdown. Change this one line to move the launch.
+const SEASON1 = new Date('2026-11-23T19:00:00-05:00'); // Mon Nov 23, 7:00 PM Eastern
+function tickCd() {
+  let t = Math.max(0, SEASON1 - Date.now()) / 1000;
+  const p = (n) => String(Math.floor(n)).padStart(2, '0');
+  $('cdD').textContent = p(t / 86400); $('cdH').textContent = p(t % 86400 / 3600);
+  $('cdM').textContent = p(t % 3600 / 60); $('cdS').textContent = p(t % 60);
+  if (t === 0) { $('cdLbl').textContent = 'SEASON 1 IS LIVE'; document.querySelector('.cd .ps').textContent = 'SEASON 1'; }
+}
+tickCd(); setInterval(tickCd, 1000);
 
 let viewer = null;
 try {
