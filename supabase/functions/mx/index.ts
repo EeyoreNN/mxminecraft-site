@@ -108,11 +108,23 @@ Deno.serve(async (req) => {
       // Proxy the player's skin PNG from Mojang (textures.minecraft.net has no CORS).
       const uuid = (url.searchParams.get("uuid") ?? "").replace(/-/g, "");
       if (!/^[0-9a-f]{32}$/.test(uuid)) return json(req, { error: "bad uuid" }, 400);
-      const prof = await fetch(`https://sessionserver.mojang.com/session/minecraft/profile/${uuid}`);
-      if (prof.status !== 200) return json(req, { error: "no profile" }, 404);
-      const tex = JSON.parse(atob((await prof.json()).properties[0].value)).textures?.SKIN;
-      if (!tex?.url?.startsWith("http://textures.minecraft.net/") && !tex?.url?.startsWith("https://textures.minecraft.net/"))
-        return json(req, { error: "no skin" }, 404);
+      // Mojang's session server rate-limits shared edge IPs, so fall back to playerdb for the texture URL.
+      let tex: { url?: string; metadata?: { model?: string } } | undefined;
+      try {
+        const prof = await fetch(`https://sessionserver.mojang.com/session/minecraft/profile/${uuid}`);
+        if (prof.status === 200) tex = JSON.parse(atob((await prof.json()).properties[0].value)).textures?.SKIN;
+      } catch { /* fall through */ }
+      if (!tex?.url) {
+        try {
+          const pd = await fetch(`https://playerdb.co/api/player/minecraft/${uuid}`, { headers: { "User-Agent": "mxminecraft.net" } });
+          if (pd.status === 200) {
+            const pl = (await pd.json()).data?.player;
+            const raw = pl?.properties?.find((x: any) => x.name === "textures")?.value;
+            tex = raw ? JSON.parse(atob(raw)).textures?.SKIN : { url: pl?.skin_texture };
+          }
+        } catch { /* fall through */ }
+      }
+      if (!tex?.url || !/^https?:\/\/textures\.minecraft\.net\//.test(tex.url)) return json(req, { error: "no skin" }, 404);
       const png = await fetch(tex.url.replace("http://", "https://"));
       return new Response(png.body, { headers: { ...cors(req), "Content-Type": "image/png", "Cache-Control": "public, max-age=3600",
         "X-Skin-Model": tex.metadata?.model === "slim" ? "slim" : "default", "Access-Control-Expose-Headers": "X-Skin-Model" } });
