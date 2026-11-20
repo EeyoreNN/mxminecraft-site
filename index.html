@@ -1,117 +1,279 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>MX Minecraft</title>
-<meta name="description" content="MX Minecraft: a whitelisted vanilla Java server. Here's how to join.">
+<meta name="description" content="MX Minecraft: an unofficial, alumni-run MX reunion server. Vanilla Java survival, whitelisted.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' fill='%235d9b3a'/><rect y='10' width='16' height='6' fill='%23795436'/><rect x='3' y='12' width='2' height='2' fill='%23634329'/><rect x='10' y='13' width='2' height='2' fill='%23634329'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0f1410; --panel:#18201a; --panel2:#1f2a21; --line:#2c3a2e;
+  --bg:#0d120e; --panel:#161e18; --panel2:#1c261e; --line:#2a382c;
   --text:#e8efe6; --muted:#9db09f; --grass:#6fbf3f; --grass-d:#4d8a2a;
-  --dirt:#7a5537; --gold:#f2c94c; --red:#e5534b;
+  --dirt:#7a5537; --gold:#f2c94c; --red:#e5534b; --sky1:#4f8fd6; --sky2:#9fd0ff;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font:16px/1.6 Inter,system-ui,sans-serif;min-height:100vh}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font:16px/1.6 Inter,system-ui,sans-serif}
 a{color:var(--grass)}
-.wrap{max-width:880px;margin:0 auto;padding:0 16px}
-header{
-  background:
-    linear-gradient(180deg,rgba(15,20,16,.0) 60%,var(--bg)),
-    repeating-linear-gradient(90deg,#86c5ff 0 64px,#7dbcf7 64px 128px);
-  border-bottom:8px solid var(--grass-d);
-  box-shadow:inset 0 -24px 0 var(--dirt);
-  padding:72px 0 88px;text-align:center;
-}
-h1{font-family:'Press Start 2P',monospace;font-size:clamp(28px,7vw,56px);color:#fff;
-  text-shadow:4px 4px 0 #3a3a3a;letter-spacing:2px}
-.tag{margin-top:14px;font-weight:600;color:#1b2a1d;font-size:18px}
-.addr{margin:28px auto 0;display:inline-flex;gap:0;border:4px solid #1b1b1b;background:#2b2b2b;box-shadow:6px 6px 0 rgba(0,0,0,.35)}
-.addr code{font-family:'Press Start 2P',monospace;font-size:clamp(12px,3.4vw,18px);padding:16px 18px;color:#fff}
-.addr button{font-family:'Press Start 2P',monospace;font-size:12px;border:0;border-left:4px solid #1b1b1b;
-  background:var(--grass);color:#10240a;padding:0 16px;cursor:pointer}
-.addr button:hover{background:#82d64f}
-.status{margin:22px auto 0;display:inline-flex;align-items:center;gap:10px;background:rgba(0,0,0,.55);
-  padding:10px 16px;border-radius:999px;font-weight:600;color:#fff}
-.dot{width:12px;height:12px;border-radius:50%;background:#888;box-shadow:0 0 0 3px rgba(255,255,255,.08)}
+.wrap{max-width:1040px;margin:0 auto;padding:0 16px}
+.pix{font-family:'Press Start 2P',monospace}
+
+/* hero */
+header{position:relative;overflow:hidden;background:linear-gradient(180deg,var(--sky1),var(--sky2) 70%);border-bottom:10px solid var(--grass-d);box-shadow:inset 0 -28px 0 var(--dirt)}
+.cloud{position:absolute;height:22px;background:#fff;opacity:.85;box-shadow:24px -14px 0 #fff, 48px 0 0 #fff;width:48px;animation:drift linear infinite}
+@keyframes drift{from{transform:translateX(-160px)}to{transform:translateX(110vw)}}
+.hero{display:grid;grid-template-columns:1.1fr .9fr;align-items:center;gap:16px;padding:48px 0 56px;position:relative}
+h1{font-size:clamp(26px,5.4vw,52px);color:#fff;text-shadow:4px 4px 0 #2b3b52;letter-spacing:2px;line-height:1.25}
+.tag{margin-top:14px;font-weight:600;color:#0f2238;font-size:18px;max-width:30em}
+.addr{margin-top:24px;display:inline-flex;border:4px solid #1b1b1b;background:#2b2b2b;box-shadow:6px 6px 0 rgba(0,0,0,.3);max-width:100%}
+.addr code{font-family:'Press Start 2P',monospace;font-size:clamp(11px,2.8vw,16px);padding:15px 16px;color:#fff;white-space:nowrap}
+.btn{font-family:'Press Start 2P',monospace;font-size:12px;border:0;background:var(--grass);color:#10240a;padding:14px 16px;cursor:pointer;box-shadow:inset -3px -3px 0 var(--grass-d),inset 3px 3px 0 #9be36a}
+.btn:hover{filter:brightness(1.08)}
+.btn:disabled{filter:grayscale(.7);cursor:wait}
+.addr .btn{border-left:4px solid #1b1b1b}
+.status{margin-top:18px;display:inline-flex;align-items:center;gap:10px;background:rgba(0,0,0,.55);padding:9px 16px;border-radius:999px;font-weight:600;color:#fff}
+.dot{width:12px;height:12px;border-radius:50%;background:#888}
 .dot.on{background:var(--grass);box-shadow:0 0 12px var(--grass)}
 .dot.off{background:var(--red)}
-main{padding:40px 0 64px}
-h2{font-family:'Press Start 2P',monospace;font-size:16px;color:var(--gold);margin:40px 0 18px}
-.steps{display:grid;gap:14px;counter-reset:s}
-.step{background:var(--panel);border:2px solid var(--line);padding:18px 18px 18px 72px;position:relative}
-.step::before{counter-increment:s;content:counter(s);position:absolute;left:18px;top:16px;width:38px;height:38px;
-  display:grid;place-items:center;font-family:'Press Start 2P',monospace;font-size:14px;background:var(--grass-d);color:#fff;border:2px solid #2c4d1a}
-.step b{display:block;font-size:17px;margin-bottom:2px}
+#skin{width:100%;max-width:380px;height:440px;justify-self:center;cursor:grab}
+.nametag{justify-self:center;margin-top:-8px;background:rgba(0,0,0,.5);color:#fff;padding:6px 12px;font-size:12px}
+
+/* sections */
+main{padding:8px 0 64px}
+h2{font-size:15px;color:var(--gold);margin:48px 0 18px}
+.panel{background:var(--panel);border:2px solid var(--line);padding:22px}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+input{flex:1;min-width:180px;font:16px Inter,sans-serif;background:#0b0f0c;color:var(--text);border:2px solid var(--line);padding:13px 14px;outline:none}
+input:focus{border-color:var(--grass)}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.form .full{grid-column:1/-1}
+.msg{margin-top:14px;padding:14px 16px;border-left:6px solid var(--muted);background:var(--panel2);display:none}
+.msg.show{display:block}
+.msg.ok{border-color:var(--grass)} .msg.warn{border-color:var(--gold)} .msg.err{border-color:var(--red)}
+.msg b{display:block;font-size:17px;margin-bottom:2px}
+.hint{color:var(--muted);font-size:14px;margin-top:8px}
+.hidden{display:none!important}
+.steps{display:grid;gap:12px;counter-reset:s}
+.step{background:var(--panel);border:2px solid var(--line);padding:16px 16px 16px 70px;position:relative}
+.step::before{counter-increment:s;content:counter(s);position:absolute;left:16px;top:14px;width:38px;height:38px;display:grid;place-items:center;font-family:'Press Start 2P',monospace;font-size:14px;background:var(--grass-d);color:#fff}
+.step b{display:block;font-size:17px}
 .step p{color:var(--muted)}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
-.card{background:var(--panel2);border:2px solid var(--line);padding:18px}
-.card b{display:block;margin-bottom:4px}
-.card p,.card li{color:var(--muted)}
-.card ul{padding-left:18px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.card{background:var(--panel2);border:2px solid var(--line);padding:16px}
+.card .ic{font-size:24px}
+.card b{display:block;margin:4px 0}
+.card p{color:var(--muted)}
+.kbd{font-family:ui-monospace,monospace;background:#0b0f0c;border:1px solid var(--line);padding:1px 6px;white-space:nowrap}
 footer{border-top:2px solid var(--line);padding:24px 0;color:var(--muted);font-size:14px;text-align:center}
-.kbd{font-family:ui-monospace,monospace;background:#0b0f0c;border:1px solid var(--line);padding:1px 6px}
+@media (max-width:760px){
+  .hero{grid-template-columns:1fr;text-align:center;padding-top:36px}
+  .tag{margin-inline:auto}
+  #skin{height:320px}
+  .form{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
 <header>
-  <div class="wrap">
-    <h1>MX MINECRAFT</h1>
-    <p class="tag">Vanilla Java survival. No mods or pay-to-win, and the map is pregenerated so it doesn't lag.</p>
-    <div class="addr"><code id="ip">mxminecraft.net</code><button id="copy" type="button">COPY</button></div>
-    <div><div class="status" id="status"><span class="dot" id="dot"></span><span id="stext">Checking server…</span></div></div>
+  <div class="cloud" style="top:40px;animation-duration:70s"></div>
+  <div class="cloud" style="top:120px;animation-duration:95s;animation-delay:-40s"></div>
+  <div class="cloud" style="top:70px;animation-duration:120s;animation-delay:-80s"></div>
+  <div class="wrap hero">
+    <div>
+      <h1 class="pix" id="title">MX<br>MINECRAFT</h1>
+      <p class="tag" id="tagline">The MX reunion server. It's vanilla survival with old friends, and you need an invite to join.</p>
+      <div class="addr"><code>mxminecraft.net</code><button class="btn" id="copy" type="button">COPY</button></div>
+      <div><div class="status"><span class="dot" id="dot"></span><span id="stext">Checking serverâ€¦</span></div></div>
+    </div>
+    <div style="display:grid">
+      <canvas id="skin" aria-label="3D Minecraft character"></canvas>
+      <div class="nametag pix" id="nametag">STEVE</div>
+    </div>
   </div>
 </header>
 
 <main class="wrap">
-  <h2>GET STARTED</h2>
+  <h2 class="pix" id="join">JOIN MX</h2>
+  <div class="panel">
+    <p>Enter your Minecraft username to check whether you're whitelisted.</p>
+    <div class="row" style="margin-top:12px">
+      <input id="mc" placeholder="Minecraft username" maxlength="16" autocomplete="off" spellcheck="false">
+      <button class="btn" id="checkBtn">CHECK</button>
+    </div>
+
+    <div id="signup" class="hidden">
+      <p style="margin-top:18px">You aren't on the whitelist yet. To request access, enter your name and your MX school email.</p>
+      <div class="form">
+        <input id="first" placeholder="First name" maxlength="40" autocomplete="given-name">
+        <input id="last" placeholder="Last name" maxlength="40" autocomplete="family-name">
+        <input id="email" class="full" placeholder="you@mxschool.edu" maxlength="120" autocomplete="email" type="email">
+        <button class="btn full" id="sendBtn">REQUEST ACCESS</button>
+      </div>
+      <p class="hint">Only @mxschool.edu addresses are accepted. If we can email you, we'll send a 6-digit code to confirm the address is yours.</p>
+    </div>
+
+    <div id="codeBox" class="hidden">
+      <p style="margin-top:18px">We emailed a 6-digit code to <b id="codeEmail"></b>. Enter it below.</p>
+      <div class="row" style="margin-top:10px">
+        <input id="code" placeholder="123456" maxlength="6" inputmode="numeric" autocomplete="one-time-code">
+        <button class="btn" id="verifyBtn">VERIFY</button>
+      </div>
+    </div>
+
+    <div class="msg" id="msg"></div>
+  </div>
+
+  <h2 class="pix" id="connect">HOW TO CONNECT</h2>
   <div class="steps">
-    <div class="step"><b>Get Minecraft: Java Edition</b><p>Open the launcher and play the latest release (26.3). Bedrock (console, phone, Windows Store version) can't join.</p></div>
-    <div class="step"><b>Get whitelisted</b><p>This server is invite-only. Send your exact Java username to Nick or an admin and wait until they say you've been added.</p></div>
-    <div class="step"><b>Add the server</b><p>Go to <span class="kbd">Multiplayer</span>, then <span class="kbd">Add Server</span>, and type <span class="kbd">mxminecraft.net</span> as the address. You don't need a port.</p></div>
-    <div class="step"><b>Join and play</b><p>Double-click MX Minecraft. If it says "not whitelisted", your name hasn't been added yet, so ask again.</p></div>
+    <div class="step"><b>Open Minecraft: Java Edition</b><p>Use the latest release (26.3) in the launcher. Bedrock (console, phone, the Windows Store version) can't join.</p></div>
+    <div class="step"><b>Go to Multiplayer, then Add Server</b><p>Name it whatever you like, then type <span class="kbd">mxminecraft.net</span> as the server address. You don't need a port.</p></div>
+    <div class="step"><b>Join</b><p>Double-click it. If you see "You are not whitelisted on this server", your request is still waiting on an admin. Check this page again in a bit.</p></div>
   </div>
 
-  <h2>RULES</h2>
+  <h2 class="pix">THE WORLD</h2>
   <div class="grid">
-    <div class="card"><b>Be cool</b><p>No griefing, stealing, or harassment. Build near people only if they're fine with it.</p></div>
-    <div class="card"><b>No cheats</b><p>No x-ray, hacked clients, or dupes. Performance mods like Sodium and Iris are fine.</p></div>
-    <div class="card"><b>Keep it fair</b><p>No lag machines. Keep giant farms reasonable so everyone can play.</p></div>
+    <div class="card"><div class="ic">ðŸŒ</div><b>Fresh vanilla seed</b><p>It's a brand-new world with no mods, no datapacks and no custom terrain. We won't share the seed, so it's all yours to explore.</p></div>
+    <div class="card"><div class="ic">ðŸ—ºï¸</div><b>Huge, pregenerated map</b><p>The Overworld is generated out to 10,000 blocks in every direction, so exploring stays smooth with no chunk-loading lag.</p></div>
+    <div class="card"><div class="ic">ðŸ”¥</div><b>Nether ready</b><p>The Nether is pregenerated too. Travel is fast, and you can build highways if you like.</p></div>
+    <div class="card"><div class="ic">ðŸ‰</div><b>The End awaits</b><p>No one has been there yet. The first expedition is up to the server.</p></div>
   </div>
 
-  <h2>FAQ</h2>
+  <h2 class="pix">RULES</h2>
   <div class="grid">
-    <div class="card"><b>The status says offline</b><p>The server runs on a home PC and is sometimes down for updates. Check back later, or ask in the group chat.</p></div>
-    <div class="card"><b>"Outdated client/server"</b><p>Switch your launcher to the latest release. The badge above shows the server's version.</p></div>
-    <div class="card"><b>Where do I live?</b><p>The world is pregenerated out to 10,000 blocks, so you can pick a spot and settle.</p></div>
+    <div class="card"><div class="ic">ðŸ¤</div><b>Be cool</b><p>No griefing, stealing or harassment. Ask before you build right next to someone.</p></div>
+    <div class="card"><div class="ic">ðŸš«</div><b>No cheats</b><p>No x-ray, hacked clients or dupe exploits. Performance mods like Sodium, Iris and minimaps are fine.</p></div>
+    <div class="card"><div class="ic">âš™ï¸</div><b>Go easy on the server</b><p>No lag machines, and keep mega-farms reasonable. It runs on a home PC.</p></div>
+    <div class="card"><div class="ic">ðŸŽ“</div><b>MX only</b><p>Your access is for you. Don't share accounts. Friends can request their own access here.</p></div>
   </div>
 </main>
 
-<footer>MX Minecraft · not affiliated with Mojang or Microsoft</footer>
+<footer>MX Minecraft Â· not affiliated with Mojang or Microsoft</footer>
 
+<script src="https://cdn.jsdelivr.net/npm/skinview3d@3.1.0/bundles/skinview3d.bundle.js"></script>
 <script>
 const ADDR = 'mxminecraft.net';
-document.getElementById('copy').onclick = async (e) => {
-  try { await navigator.clipboard.writeText(ADDR); e.target.textContent = 'COPIED'; }
-  catch { e.target.textContent = 'CTRL+C'; }
+const API = 'https://bdsdvogepvkvfjdohkbo.supabase.co/functions/v1/mx';
+const $ = (id) => document.getElementById(id);
+const STEVE = 'c06f89064c8a49119c29ea1dbd1aab82'; // MHF_Steve
+let player = null, reqId = null, pollTimer = null;
+
+// 3D character
+let viewer = null;
+try {
+  viewer = new skinview3d.SkinViewer({ canvas: $('skin'), width: $('skin').clientWidth, height: $('skin').clientHeight });
+  viewer.autoRotate = true; viewer.autoRotateSpeed = 0.6;
+  viewer.animation = new skinview3d.WalkingAnimation(); viewer.animation.speed = 0.7;
+  viewer.zoom = 0.85; viewer.fov = 60;
+  loadSkin(STEVE);
+  addEventListener('resize', () => viewer.setSize($('skin').clientWidth, $('skin').clientHeight));
+} catch (e) { $('skin').style.display = 'none'; }
+
+async function loadSkin(uuid) {
+  if (!viewer) return;
+  const url = `${API}?action=skin&uuid=${uuid}`;
+  let model = 'default';
+  try { const r = await fetch(url); model = r.headers.get('X-Skin-Model') || 'default'; } catch {}
+  try { await viewer.loadSkin(url, { model: model === 'slim' ? 'slim' : 'default' }); }
+  catch { try { await viewer.loadSkin(`https://minotar.net/skin/${player ? player.name : 'MHF_Steve'}`); } catch {} }
+}
+function wave() {
+  if (!viewer) return;
+  viewer.animation = new skinview3d.WaveAnimation(); viewer.autoRotate = false;
+  viewer.playerObject.rotation.y = 0;
+  setTimeout(() => { viewer.animation = new skinview3d.WalkingAnimation(); viewer.animation.speed = .7; viewer.autoRotate = true; }, 4000);
+}
+
+// server status
+$('copy').onclick = async (e) => {
+  try { await navigator.clipboard.writeText(ADDR); e.target.textContent = 'COPIED'; } catch { e.target.textContent = 'CTRL+C'; }
   setTimeout(() => e.target.textContent = 'COPY', 1600);
 };
-async function check(){
-  const dot = document.getElementById('dot'), t = document.getElementById('stext');
+async function status() {
   try {
-    const r = await fetch('https://api.mcsrvstat.us/3/' + ADDR, {cache:'no-store'});
-    const d = await r.json();
-    if (d.online) {
-      dot.className = 'dot on';
-      const p = d.players ? `${d.players.online}/${d.players.max} online` : 'Online';
-      t.textContent = `Online · ${p}` + (d.version ? ` · ${d.version}` : '');
-    } else { dot.className = 'dot off'; t.textContent = 'Offline right now'; }
-  } catch { dot.className = 'dot'; t.textContent = 'Status unavailable'; }
+    const d = await (await fetch('https://api.mcsrvstat.us/3/' + ADDR, { cache: 'no-store' })).json();
+    if (d.online) { $('dot').className = 'dot on'; $('stext').textContent = `Online Â· ${d.players ? d.players.online + '/' + d.players.max + ' playing' : ''}${d.version ? ' Â· ' + d.version : ''}`; }
+    else { $('dot').className = 'dot off'; $('stext').textContent = 'Offline right now'; }
+  } catch { $('dot').className = 'dot'; $('stext').textContent = 'Status unavailable'; }
 }
-check(); setInterval(check, 60000);
+status(); setInterval(status, 60000);
+
+// join flow
+function say(kind, title, text) {
+  const m = $('msg'); m.className = `msg show ${kind}`;
+  m.innerHTML = ''; const b = document.createElement('b'); b.textContent = title; m.append(b);
+  if (text) { const p = document.createElement('p'); p.textContent = text; m.append(p); }
+}
+async function api(action, body) {
+  const r = await fetch(`${API}?action=${action}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(j.error || 'Something went wrong.');
+  return j;
+}
+function busy(btn, on) { btn.disabled = on; }
+function welcome(name) {
+  $('nametag').textContent = player.name;
+  $('title').innerHTML = 'WELCOME,<br>' + player.name.toUpperCase().replace(/[^A-Z0-9_]/g, '');
+  $('tagline').textContent = (name ? name + ', you' : 'You') + "'re whitelisted and ready to play.";
+}
+function allSet(name) {
+  $('signup').classList.add('hidden'); $('codeBox').classList.add('hidden');
+  say('ok', "âœ… You're all set!", `${player.name} is on the whitelist. Follow the steps below to connect.`);
+  welcome(name); wave();
+  setTimeout(() => $('connect').scrollIntoView(), 900);
+}
+function pending() {
+  $('signup').classList.add('hidden'); $('codeBox').classList.add('hidden');
+  say('warn', "â³ You're not whitelisted yet. An admin has been pinged.",
+      "We'll whitelist you as soon as an admin approves your request. You can leave this page open. It updates by itself, and it'll tell you when you're in.");
+  clearInterval(pollTimer);
+  pollTimer = setInterval(async () => {
+    try { const s = await api('status', { id: reqId }); if (s.status === 'whitelisted' || s.status === 'applied') { clearInterval(pollTimer); allSet(); } } catch {}
+  }, 20000);
+}
+
+$('checkBtn').onclick = async () => {
+  const mc = $('mc').value.trim();
+  if (!/^[A-Za-z0-9_]{3,16}$/.test(mc)) return say('err', 'Check the username', 'Minecraft names are 3 to 16 letters, numbers or underscores.');
+  busy($('checkBtn'), true);
+  try {
+    const r = await api('check', { mc });
+    if (!r.exists) { say('err', 'Account not found', "There's no Java Edition account with that name. Check the spelling."); return; }
+    player = r; $('nametag').textContent = r.name; loadSkin(r.uuid.replace(/-/g, ''));
+    if (r.whitelisted) allSet();
+    else { $('msg').className = 'msg'; $('signup').classList.remove('hidden'); $('first').focus(); }
+  } catch (e) { say('err', 'Error', e.message); }
+  finally { busy($('checkBtn'), false); }
+};
+$('mc').addEventListener('keydown', (e) => e.key === 'Enter' && $('checkBtn').click());
+
+$('sendBtn').onclick = async () => {
+  const first = $('first').value.trim(), last = $('last').value.trim(), email = $('email').value.trim().toLowerCase();
+  if (!first || !last) return say('err', 'Missing name', 'Please enter your first and last name.');
+  if (!/^[a-z0-9._%+-]+@mxschool\.edu$/.test(email)) return say('err', 'School email only', 'Please use your @mxschool.edu email address.');
+  busy($('sendBtn'), true);
+  try {
+    const r = await api('signup', { first, last, email, mc: player.name });
+    if (r.status === 'whitelisted') return allSet(first);
+    reqId = r.id; welcomeName = `${first} ${last}`;
+    $('nametag').textContent = `${first} ${last[0]}. + ${player.name}`;
+    if (r.needsCode) { $('signup').classList.add('hidden'); $('codeBox').classList.remove('hidden'); $('codeEmail').textContent = email; $('msg').className = 'msg'; $('code').focus(); }
+    else pending();
+  } catch (e) { say('err', "Couldn't send", e.message); }
+  finally { busy($('sendBtn'), false); }
+};
+let welcomeName = '';
+$('verifyBtn').onclick = async () => {
+  const code = $('code').value.trim();
+  if (!/^\d{6}$/.test(code)) return say('err', 'Enter the 6-digit code', '');
+  busy($('verifyBtn'), true);
+  try { const r = await api('verify', { id: reqId, code }); r.status === 'whitelisted' ? allSet(welcomeName) : pending(); }
+  catch (e) { say('err', 'Not quite', e.message); }
+  finally { busy($('verifyBtn'), false); }
+};
+$('code').addEventListener('keydown', (e) => e.key === 'Enter' && $('verifyBtn').click());
 </script>
 </body>
 </html>
