@@ -4,239 +4,176 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>MX Minecraft</title>
-<meta name="description" content="MX Minecraft: an unofficial, alumni-run reunion server. Members only.">
+<meta name="description" content="MX Minecraft: a members-only vanilla Java server.">
 <meta name="robots" content="noindex">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8' shape-rendering='crispEdges'><rect width='8' height='8' fill='%23866043'/><rect width='8' height='3' fill='%235d9b3a'/><rect y='3' width='2' height='1' fill='%235d9b3a'/><rect x='5' y='3' width='1' height='1' fill='%235d9b3a'/><rect x='2' y='5' width='1' height='1' fill='%236b4a31'/><rect x='6' y='6' width='1' height='1' fill='%236b4a31'/></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' fill='%235d9b3a'/><rect y='10' width='16' height='6' fill='%23795436'/><rect x='3' y='12' width='2' height='2' fill='%23634329'/><rect x='10' y='13' width='2' height='2' fill='%23634329'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Pixelify+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --text:#fff; --shadow:#3f3f3f; --muted:#c6c6c6; --dim:#a0a0a0;
-  --yellow:#ffff55; --green:#55ff55; --red:#ff5555; --aqua:#55ffff; --gold:#ffaa00;
+  --bg:#0f1410; --panel:#18201a; --panel2:#1f2a21; --line:#2c3a2e;
+  --text:#e8efe6; --muted:#9db09f; --grass:#6fbf3f; --grass-d:#4d8a2a;
+  --dirt:#7a5537; --gold:#f2c94c; --red:#e5534b;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{min-height:100%}
-body{color:var(--text);font:18px/1.45 'Pixelify Sans',monospace;background:#2a1d14;
-  background-image:linear-gradient(rgba(0,0,0,.55),rgba(0,0,0,.55)),var(--dirt);background-size:auto,64px 64px;image-rendering:pixelated}
-.ts{text-shadow:2px 2px 0 var(--shadow)}
-a{color:var(--aqua)}
-.wrap{max-width:1180px;margin:0 auto;padding:0 16px}
+body{background:var(--bg);color:var(--text);font:16px/1.6 Inter,system-ui,sans-serif;min-height:100vh}
+a{color:var(--grass)}
+.wrap{max-width:1080px;margin:0 auto;padding:0 16px}
+.pix{font-family:'Press Start 2P',monospace}
 .hidden{display:none!important}
 
-.stage{display:grid;grid-template-columns:minmax(0,1fr) 420px;gap:28px;align-items:start;padding:34px 16px 60px}
-.side{position:sticky;top:20px}
-.player{position:relative;height:560px}
+/* sky hero with grass + dirt edge */
+header{position:relative;overflow:hidden;background:linear-gradient(180deg,#4f8fd6,#9fd0ff 75%);border-bottom:10px solid var(--grass-d);box-shadow:inset 0 -26px 0 var(--dirt)}
+.cloud{position:absolute;height:22px;width:48px;background:#fff;opacity:.85;box-shadow:24px -14px 0 #fff,48px 0 0 #fff;animation:drift linear infinite}
+@keyframes drift{from{transform:translateX(-160px)}to{transform:translateX(110vw)}}
+.hero{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:24px;align-items:end;padding:44px 16px 34px}
+h1{font-size:clamp(28px,5.6vw,54px);color:#fff;text-shadow:4px 4px 0 #2b3b52;letter-spacing:2px;line-height:1.2}
+.tag{margin-top:12px;font-weight:600;color:#10233a;font-size:18px;max-width:32em}
+.player{position:relative;height:420px}
 #skin{width:100%;height:100%;cursor:grab}
-.plinth{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);width:170px;height:26px;background:radial-gradient(closest-side,rgba(0,0,0,.55),transparent)}
-.nametag{position:absolute;top:8px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.45);padding:2px 10px;font-size:18px;white-space:nowrap;z-index:1}
+.nametag{position:absolute;top:4px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.45);color:#fff;padding:3px 10px;font-size:11px;white-space:nowrap;z-index:1}
 
-.logo{font-family:'Press Start 2P',monospace;font-size:clamp(34px,6.4vw,70px);line-height:1;letter-spacing:2px;color:#e8e8e8;
-  text-shadow:0 4px 0 #8a8a8a,0 8px 0 #5a5a5a,0 12px 0 #2e2e2e,0 16px 18px rgba(0,0,0,.55);-webkit-text-stroke:2px #1d1d1d;paint-order:stroke fill}
-.logo small{display:block;font-size:.34em;letter-spacing:6px;margin-top:22px;color:#cfcfcf;-webkit-text-stroke:1px #1d1d1d}
-.logobox{position:relative;display:inline-block;margin:14px 0 30px}
-.splash{position:absolute;right:-170px;top:108px;color:var(--yellow);font-family:'Press Start 2P';font-size:13px;text-shadow:2px 2px 0 #3f3f00;
-  transform:rotate(-17deg);animation:pulse .55s ease-in-out infinite alternate;white-space:nowrap}
-@keyframes pulse{to{transform:rotate(-17deg) scale(1.09)}}
+/* blocky card + controls */
+.card{background:var(--panel);border:4px solid #1b1b1b;box-shadow:6px 6px 0 rgba(0,0,0,.35);padding:20px;margin-top:22px;max-width:480px}
+.card h2{font-size:13px;color:var(--gold);margin-bottom:12px}
+.seg{display:flex;margin-top:22px;max-width:480px;border:4px solid #1b1b1b;box-shadow:6px 6px 0 rgba(0,0,0,.35)}
+.seg button{flex:1;font:12px 'Press Start 2P';padding:13px 8px;border:0;background:#2b2b2b;color:#bbb;cursor:pointer}
+.seg button.on{background:var(--grass);color:#10240a}
+.seg + .card{margin-top:0;border-top:0;box-shadow:6px 6px 0 rgba(0,0,0,.35)}
+label{display:block;color:var(--muted);font-size:13px;font-weight:600;margin:12px 0 5px}
+input{width:100%;font:16px Inter,sans-serif;color:var(--text);background:#0b0f0c;border:2px solid var(--line);padding:11px 12px;outline:none}
+input:focus{border-color:var(--grass)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{font:12px 'Press Start 2P';border:4px solid #1b1b1b;background:var(--grass);color:#10240a;padding:13px 16px;cursor:pointer;width:100%;margin-top:16px;box-shadow:inset -3px -3px 0 var(--grass-d),inset 3px 3px 0 #9be36a}
+.btn:hover{filter:brightness(1.08)}
+.btn:disabled{filter:grayscale(.7);cursor:wait}
+.btn.ghost{background:#2b2b2b;color:#ddd;box-shadow:inset -3px -3px 0 #1b1b1b,inset 3px 3px 0 #444;width:auto;margin:0;padding:9px 12px;font-size:10px}
+.msg{margin-top:10px;font-weight:600;font-size:14px}
+.msg.err{color:#ff8a80}
+.fine{color:var(--muted);font-size:13px;margin-top:10px}
 
-.btn{display:block;width:100%;font:600 19px 'Pixelify Sans';color:#fff;text-shadow:2px 2px 0 var(--shadow);cursor:pointer;
-  background:var(--stone);background-size:64px 64px;border:2px solid #000;padding:9px 12px;position:relative;text-align:center;image-rendering:pixelated}
-.btn::after{content:"";position:absolute;inset:0;box-shadow:inset 2px 2px 0 rgba(255,255,255,.35),inset -2px -3px 0 rgba(0,0,0,.45);pointer-events:none}
-.btn:hover{outline:2px solid #fff;outline-offset:-2px;color:var(--yellow)}
-.btn:disabled{filter:brightness(.6);cursor:default;color:#a0a0a0;outline:none}
-.btn.green{background:linear-gradient(rgba(60,140,40,.55),rgba(60,140,40,.55)),var(--stone);background-size:auto,64px 64px}
-.btn.on{color:var(--yellow);outline:2px solid #fff;outline-offset:-2px}
-.row{display:flex;gap:10px}
-.row>*{flex:1;min-width:0}
+/* member hero bits */
+.addr{margin-top:22px;display:inline-flex;max-width:100%;border:4px solid #1b1b1b;background:#2b2b2b;box-shadow:6px 6px 0 rgba(0,0,0,.35)}
+.addr code{font:clamp(11px,2.8vw,16px) 'Press Start 2P';padding:14px 16px;color:#fff;white-space:nowrap}
+.addr button{font:11px 'Press Start 2P';border:0;border-left:4px solid #1b1b1b;background:var(--grass);color:#10240a;padding:0 14px;cursor:pointer}
+.status{margin-top:16px;display:inline-flex;align-items:center;gap:10px;background:rgba(0,0,0,.55);padding:8px 16px;border-radius:999px;font-weight:600;color:#fff}
+.dot{width:12px;height:12px;border-radius:50%;background:#888}
+.dot.on{background:var(--grass);box-shadow:0 0 12px var(--grass)} .dot.off{background:var(--red)}
+.who{display:flex;align-items:center;gap:12px;margin-bottom:14px;color:#10233a;font-weight:600}
 
-label{display:block;color:var(--dim);font-size:15px;margin:12px 0 4px}
-input{width:100%;font:18px 'Pixelify Sans';color:#e0e0e0;background:#000;border:2px solid #a0a0a0;padding:9px 10px;outline:none}
-input:focus{border-color:#fff}
-input::placeholder{color:#555}
-
-.panel{background:rgba(0,0,0,.6);border:2px solid #000;box-shadow:inset 0 0 0 2px rgba(255,255,255,.12);padding:20px}
-.panel h2{font:400 15px 'Press Start 2P';color:var(--yellow);text-shadow:2px 2px 0 #3f3f00;margin-bottom:14px;letter-spacing:1px}
-.gate{max-width:520px}
-.gate .panel{margin-top:14px}
-.msg{margin-top:12px;font-size:17px}
-.msg.err{color:var(--red)} .msg.ok{color:var(--green)}
-.fine{color:var(--dim);font-size:15px;margin-top:12px}
-
-.srv{display:flex;gap:14px;align-items:center;background:rgba(0,0,0,.55);border:2px solid #808080;padding:10px}
-.srv .ic{width:64px;height:64px;flex:none;background:var(--grassblock);background-size:64px 64px;image-rendering:pixelated}
-.srv .nm{font-size:19px}
-.srv .motd{color:var(--dim);font-size:16px}
-.srv .motd b{color:var(--gold);font-weight:400}
-.srv .right{margin-left:auto;text-align:right;color:var(--dim);font-size:16px}
-.bars{display:inline-flex;gap:2px;align-items:flex-end;height:16px;margin-left:8px;vertical-align:-2px}
-.bars i{width:3px;background:#2f2f2f}
-.bars.on i{background:var(--green)}
-.bars i:nth-child(1){height:4px}.bars i:nth-child(2){height:7px}.bars i:nth-child(3){height:10px}.bars i:nth-child(4){height:13px}.bars i:nth-child(5){height:16px}
-
-.toast{display:flex;gap:14px;align-items:center;background:#212121;border:2px solid #000;box-shadow:inset 0 0 0 2px #555;padding:12px 14px;margin-top:16px;animation:slide .5s ease-out}
-@keyframes slide{from{transform:translateX(30px);opacity:0}}
-.toast .ti{width:40px;height:40px;flex:none;display:grid;place-items:center;font-size:28px}
-.toast b{display:block;font-weight:400;color:var(--yellow)}
-.toast.pend b{color:var(--gold)}
-
-.cd{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;text-align:center}
-.cd div{background:rgba(0,0,0,.5);border:2px solid #000;box-shadow:inset 0 0 0 2px rgba(255,255,255,.08);padding:10px 4px}
-.cd b{display:block;font:400 clamp(20px,4vw,30px) 'Press Start 2P';color:var(--gold);text-shadow:3px 3px 0 #3f2a00}
-.cd small{color:var(--dim);font-size:14px}
-.badge{display:inline-block;background:var(--green);color:#0a2a0a;font:400 10px 'Press Start 2P';padding:5px 8px;margin-left:8px;vertical-align:2px;text-shadow:none}
-
-.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:22px 0 0}
-.list{display:grid;gap:10px}
-.item{display:flex;gap:12px;background:rgba(0,0,0,.35);border-left:4px solid var(--green);padding:10px 12px}
-.item .n{font:400 12px 'Press Start 2P';color:var(--green);padding-top:5px;flex:none;width:26px}
-.item b{display:block;font-weight:600}
-.item p{color:var(--muted);font-size:16px}
-.top{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
-.top .who{color:var(--dim)}
-.top .who b{color:#fff;font-weight:400}
-.top .btn{width:auto;margin-left:auto;padding:6px 14px;font-size:16px}
-.copy{display:flex}
-.copy code{flex:1;min-width:0;font:400 clamp(12px,2.6vw,16px) 'Press Start 2P';background:#000;border:2px solid #a0a0a0;border-right:0;padding:12px;color:#fff}
-.copy .btn{width:auto;padding:0 18px}
-footer{color:#8a8a8a;font-size:14px;text-align:center;padding:0 16px 30px}
-@media (max-width:900px){
-  .stage{grid-template-columns:1fr}
-  .side{position:static;order:-1}
-  .player{height:340px}
-  .splash{right:0}
+main{padding:30px 16px 60px}
+.toast{display:flex;gap:14px;align-items:center;background:var(--panel);border:2px solid var(--line);border-left:6px solid var(--grass);padding:14px 16px}
+.toast.pend{border-left-color:var(--gold)} .toast.deny{border-left-color:var(--red)}
+.toast .ic{font-size:26px}
+.toast b{display:block;font-size:17px}
+.toast p{color:var(--muted)}
+h3{font-family:'Press Start 2P';font-size:15px;color:var(--gold);margin:38px 0 16px}
+.cd{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:560px}
+.cd div{background:var(--panel);border:2px solid var(--line);text-align:center;padding:12px 4px}
+.cd b{display:block;font:clamp(18px,4vw,28px) 'Press Start 2P';color:var(--gold)}
+.cd small{color:var(--muted);font-size:12px}
+.ps{display:inline-block;background:var(--grass);color:#10240a;font:9px 'Press Start 2P';padding:5px 7px;margin-left:10px;vertical-align:3px}
+.steps{display:grid;gap:12px;counter-reset:s}
+.step{background:var(--panel);border:2px solid var(--line);padding:16px 16px 16px 70px;position:relative}
+.step::before{counter-increment:s;content:counter(s);position:absolute;left:16px;top:14px;width:38px;height:38px;display:grid;place-items:center;font:14px 'Press Start 2P';background:var(--grass-d);color:#fff;border:2px solid #2c4d1a}
+.step b{display:block;font-size:17px}
+.step p,.c p{color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.c{background:var(--panel2);border:2px solid var(--line);padding:16px}
+.c b{display:block;margin-bottom:4px}
+footer{border-top:2px solid var(--line);padding:22px 16px;color:var(--muted);font-size:13px;text-align:center}
+@media (max-width:860px){
+  .hero{grid-template-columns:1fr;align-items:start}
+  .player{height:300px;order:-1}
+  .two{grid-template-columns:1fr}
 }
 </style>
 </head>
 <body>
-<div class="wrap stage">
-  <main>
-    <div class="logobox">
-      <div class="logo">MX<br>MINECRAFT<small>REUNION SERVER</small></div>
-      <div class="splash" id="splash">Class reunion edition!</div>
+<header>
+  <div class="cloud" style="top:40px;animation-duration:70s"></div>
+  <div class="cloud" style="top:120px;animation-duration:95s;animation-delay:-40s"></div>
+  <div class="cloud" style="top:70px;animation-duration:120s;animation-delay:-80s"></div>
+  <div class="wrap hero">
+    <div>
+      <!-- signed out -->
+      <div id="gate" class="hidden">
+        <h1 class="pix">MX<br>MINECRAFT</h1>
+        <p class="tag">Members-only vanilla survival. Sign in with your school email.</p>
+        <div class="seg"><button id="tabIn" class="on" type="button">SIGN IN</button><button id="tabUp" type="button">SIGN UP</button></div>
+        <form class="card" id="formIn">
+          <label for="inEmail">School email</label>
+          <input id="inEmail" type="email" placeholder="jsmith@mxschool.edu" autocomplete="email" required>
+          <button class="btn" id="inBtn" type="submit">JOIN</button>
+          <div class="msg" id="inMsg"></div>
+        </form>
+        <form class="card hidden" id="formUp">
+          <div class="two">
+            <div><label for="upFirst">First name</label><input id="upFirst" maxlength="40" autocomplete="given-name" required></div>
+            <div><label for="upLast">Last name</label><input id="upLast" maxlength="40" autocomplete="family-name" required></div>
+          </div>
+          <label for="upEmail">School email</label>
+          <input id="upEmail" type="email" placeholder="jsmith@mxschool.edu" maxlength="120" autocomplete="email" required>
+          <label for="upMc">Minecraft username (Java)</label>
+          <input id="upMc" maxlength="16" placeholder="Steve" autocomplete="off" spellcheck="false" required>
+          <button class="btn" id="upBtn" type="submit">CREATE ACCOUNT</button>
+          <div class="msg" id="upMsg"></div>
+          <p class="fine">Only @mxschool.edu emails. If you're not whitelisted yet, an admin gets pinged to approve you.</p>
+        </form>
+      </div>
+
+      <!-- signed in -->
+      <div id="hello" class="hidden">
+        <div class="who"><span id="whoName"></span><button class="btn ghost" id="logout" type="button">SIGN OUT</button></div>
+        <h1 class="pix" id="welcome">WELCOME</h1>
+        <div class="addr"><code>mxminecraft.net</code><button id="copy" type="button">COPY</button></div>
+        <div><div class="status"><span class="dot" id="dot"></span><span id="stext">Checking server…</span></div></div>
+      </div>
+
+      <div id="loading" class="pix" style="color:#fff;font-size:12px">LOADING…</div>
     </div>
-
-    <section id="gate" class="gate hidden">
-      <div class="row">
-        <button class="btn on" id="tabIn" type="button">Sign in</button>
-        <button class="btn" id="tabUp" type="button">Create account</button>
-      </div>
-
-      <form class="panel" id="formIn" autocomplete="on">
-        <h2>SIGN IN</h2>
-        <label for="inEmail">School email</label>
-        <input id="inEmail" type="email" placeholder="jsmith@mxschool.edu" autocomplete="username" required>
-        <label for="inPw">Password</label>
-        <input id="inPw" type="password" placeholder="••••••••" autocomplete="current-password" required>
-        <div style="margin-top:18px"><button class="btn green" type="submit" id="inBtn">Join world</button></div>
-        <div class="msg" id="inMsg"></div>
-        <p class="fine">Members only. Only @mxschool.edu accounts can sign in.</p>
-      </form>
-
-      <form class="panel hidden" id="formUp" autocomplete="on">
-        <h2>CREATE ACCOUNT</h2>
-        <div class="row">
-          <div><label for="upFirst">First name</label><input id="upFirst" maxlength="40" autocomplete="given-name" required></div>
-          <div><label for="upLast">Last name</label><input id="upLast" maxlength="40" autocomplete="family-name" required></div>
-        </div>
-        <label for="upEmail">School email</label>
-        <input id="upEmail" type="email" placeholder="jsmith@mxschool.edu" maxlength="120" autocomplete="email" required>
-        <label for="upMc">Minecraft username (Java)</label>
-        <input id="upMc" maxlength="16" placeholder="Steve" autocomplete="off" spellcheck="false" required>
-        <label for="upPw">Password (8+ characters)</label>
-        <input id="upPw" type="password" minlength="8" autocomplete="new-password" required>
-        <div style="margin-top:18px"><button class="btn green" type="submit" id="upBtn">Create account</button></div>
-        <div class="msg" id="upMsg"></div>
-        <p class="fine">Only admins see your name and email. If you're not on the whitelist yet, an admin gets pinged to approve you.</p>
-      </form>
-    </section>
-
-    <section id="member" class="hidden">
-      <div class="top">
-        <span class="who ts">Signed in as <b id="whoName"></b></span>
-        <button class="btn" id="logout" type="button">Sign out</button>
-      </div>
-
-      <div class="srv">
-        <div class="ic"></div>
-        <div>
-          <div class="nm ts">MX Minecraft</div>
-          <div class="motd">Vanilla survival · <b>Pre-season open</b></div>
-        </div>
-        <div class="right"><span id="srvPl">…</span><span class="bars" id="bars"><i></i><i></i><i></i><i></i><i></i></span><div id="srvVer"></div></div>
-      </div>
-
-      <div class="toast" id="toast"></div>
-
-      <div class="panel" style="margin-top:16px">
-        <h2>SEASON 1 <span class="badge">PRE-SEASON</span></h2>
-        <div class="cd"><div><b id="cdD">--</b><small>days</small></div><div><b id="cdH">--</b><small>hours</small></div><div><b id="cdM">--</b><small>min</small></div><div><b id="cdS">--</b><small>sec</small></div></div>
-      </div>
-
-      <div class="tabs">
-        <button class="btn on" data-tab="connect" type="button">Connect</button>
-        <button class="btn" data-tab="world" type="button">The world</button>
-        <button class="btn" data-tab="rules" type="button">Rules</button>
-      </div>
-      <div class="panel" style="margin-top:8px">
-        <div id="tab-connect">
-          <h2>HOW TO JOIN</h2>
-          <div class="copy"><code id="addr">mxminecraft.net</code><button class="btn" id="copyBtn" type="button">Copy</button></div>
-          <div class="list" id="steps" style="margin-top:14px"></div>
-        </div>
-        <div id="tab-world" class="hidden"><h2>THE WORLD</h2><div class="list" id="world"></div></div>
-        <div id="tab-rules" class="hidden"><h2>RULES</h2><div class="list" id="rules"></div></div>
-      </div>
-    </section>
-
-    <div id="loading" class="ts" style="color:var(--dim)">Loading terrain…</div>
-  </main>
-
-  <aside class="side">
     <div class="player">
-      <div class="nametag ts" id="nametag">Steve</div>
+      <div class="nametag pix" id="nametag">STEVE</div>
       <canvas id="skin" aria-label="3D Minecraft player"></canvas>
-      <div class="plinth"></div>
     </div>
-  </aside>
-</div>
-<footer>MX Minecraft · unofficial, alumni-run · not affiliated with the school, Mojang or Microsoft</footer>
+  </div>
+</header>
+
+<main class="wrap hidden" id="member">
+  <div class="toast" id="toast"></div>
+
+  <h3>SEASON 1 <span class="ps">PRE-SEASON OPEN</span></h3>
+  <div class="cd"><div><b id="cdD">--</b><small>days</small></div><div><b id="cdH">--</b><small>hours</small></div><div><b id="cdM">--</b><small>min</small></div><div><b id="cdS">--</b><small>sec</small></div></div>
+
+  <h3>HOW TO JOIN</h3>
+  <div class="steps" id="steps"></div>
+
+  <h3>THE WORLD</h3>
+  <div class="grid" id="world"></div>
+
+  <h3>RULES</h3>
+  <div class="grid" id="rules"></div>
+</main>
+
+<footer>MX Minecraft · not affiliated with Mojang or Microsoft</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/skinview3d@3.1.0/bundles/skinview3d.bundle.js"></script>
 <script>
 const API = 'https://bdsdvogepvkvfjdohkbo.supabase.co/functions/v1/mx';
 const ADDR = 'mxminecraft.net';
+const EMAIL_RE = /^[a-z0-9._%+-]+@mxschool\.edu$/;
 const $ = (id) => document.getElementById(id);
 const store = { get() { try { return localStorage.getItem('mxTok'); } catch { return null; } },
                 set(v) { try { v ? localStorage.setItem('mxTok', v) : localStorage.removeItem('mxTok'); } catch {} } };
 
-// Procedural pixel textures, drawn here (no game assets).
-function tex(draw) {
-  const c = document.createElement('canvas'); c.width = c.height = 16; const g = c.getContext('2d');
-  let s = 1337; const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647;
-  draw(g, rnd); return `url(${c.toDataURL()})`;
-}
-const shade = (base, rnd, spread) => { const v = Math.floor((rnd() - .5) * spread); return base.map((x) => Math.max(0, Math.min(255, x + v))); };
-const px = (g, x, y, c) => { g.fillStyle = `rgb(${c})`; g.fillRect(x, y, 1, 1); };
-const rootStyle = document.documentElement.style;
-rootStyle.setProperty('--dirt', tex((g, r) => { for (let y = 0; y < 16; y++) for (let x = 0; x < 16; x++) px(g, x, y, shade(r() < .12 ? [96, 68, 46] : [134, 96, 67], r, 26)); }));
-rootStyle.setProperty('--stone', tex((g, r) => { for (let y = 0; y < 16; y++) for (let x = 0; x < 16; x++) px(g, x, y, shade([118, 118, 118], r, 22)); }));
-rootStyle.setProperty('--grassblock', tex((g, r) => {
-  for (let y = 0; y < 16; y++) for (let x = 0; x < 16; x++) {
-    const grass = y < 4 || (y < 6 && r() < .45);
-    px(g, x, y, shade(grass ? [93, 155, 58] : (r() < .12 ? [96, 68, 46] : [134, 96, 67]), r, 24));
-  }
-}));
-
-const SPLASHES = ['Class reunion edition!', 'Now with 100% more alumni!', 'Pregenerated!', 'Vanilla, no sprinkles!', 'Remember homeroom?', 'Season 1 soon!', 'Whitelist only!', 'Also try studying!'];
-$('splash').textContent = SPLASHES[Math.floor(Math.random() * SPLASHES.length)];
-
+// 3D player
 let viewer = null, skinSeq = 0;
 try {
   const c = $('skin');
   viewer = new skinview3d.SkinViewer({ canvas: c, width: c.clientWidth, height: c.clientHeight });
-  viewer.animation = new skinview3d.IdleAnimation();
-  viewer.autoRotate = true; viewer.autoRotateSpeed = 0.45;
-  viewer.zoom = 0.78; viewer.fov = 50;
-  viewer.controls.enableZoom = false;
+  viewer.animation = new skinview3d.WalkingAnimation(); viewer.animation.speed = .6;
+  viewer.autoRotate = true; viewer.autoRotateSpeed = .5;
+  viewer.zoom = .8; viewer.fov = 55; viewer.controls.enableZoom = false;
   loadSkin(null);
   addEventListener('resize', () => viewer.setSize(c.clientWidth, c.clientHeight));
 } catch { $('skin').style.display = 'none'; }
@@ -268,10 +205,12 @@ async function api(action, body, auth) {
   if (!r.ok) { const e = new Error(j.error || 'Something went wrong.'); e.status = r.status; throw e; }
   return j;
 }
+const msg = (id, kind, t) => { $(id).className = 'msg ' + kind; $(id).textContent = t; };
 
+// signed out
 function showGate() {
-  $('loading').classList.add('hidden'); $('member').classList.add('hidden'); $('gate').classList.remove('hidden');
-  $('nametag').textContent = 'Steve'; loadSkin(null);
+  $('loading').classList.add('hidden'); $('hello').classList.add('hidden'); $('member').classList.add('hidden');
+  $('gate').classList.remove('hidden'); $('nametag').textContent = 'STEVE'; loadSkin(null);
 }
 function tab(up) {
   $('formIn').classList.toggle('hidden', up); $('formUp').classList.toggle('hidden', !up);
@@ -279,65 +218,68 @@ function tab(up) {
 }
 $('tabIn').onclick = () => tab(false);
 $('tabUp').onclick = () => tab(true);
-const msg = (id, kind, t) => { $(id).className = 'msg ' + kind; $(id).textContent = t; };
-
 $('formIn').onsubmit = async (e) => {
   e.preventDefault();
   const email = $('inEmail').value.trim().toLowerCase();
-  if (!/^[a-z0-9._%+-]+@mxschool\.edu$/.test(email)) return msg('inMsg', 'err', 'Use your @mxschool.edu email.');
-  $('inBtn').disabled = true; msg('inMsg', '', 'Connecting…');
-  try { const r = await api('login', { email, password: $('inPw').value }); store.set(r.token); $('inPw').value = ''; await enter(true); }
-  catch (err) { msg('inMsg', 'err', err.message); }
+  if (!EMAIL_RE.test(email)) return msg('inMsg', 'err', 'Use your @mxschool.edu email.');
+  $('inBtn').disabled = true; msg('inMsg', '', '');
+  try { const r = await api('login', { email }); store.set(r.token); await enter(true); }
+  catch (err) { msg('inMsg', 'err', err.message); if (err.status === 404) { $('upEmail').value = email; } }
   finally { $('inBtn').disabled = false; }
 };
 $('formUp').onsubmit = async (e) => {
   e.preventDefault();
-  const body = { first: $('upFirst').value.trim(), last: $('upLast').value.trim(), email: $('upEmail').value.trim().toLowerCase(),
-                 mc: $('upMc').value.trim(), password: $('upPw').value };
-  if (!/^[a-z0-9._%+-]+@mxschool\.edu$/.test(body.email)) return msg('upMsg', 'err', 'Use your @mxschool.edu email.');
+  const body = { first: $('upFirst').value.trim(), last: $('upLast').value.trim(), email: $('upEmail').value.trim().toLowerCase(), mc: $('upMc').value.trim() };
+  if (!EMAIL_RE.test(body.email)) return msg('upMsg', 'err', 'Use your @mxschool.edu email.');
   if (!/^[A-Za-z0-9_]{3,16}$/.test(body.mc)) return msg('upMsg', 'err', 'Minecraft names are 3–16 letters, numbers or underscores.');
-  if (body.password.length < 8) return msg('upMsg', 'err', 'Password must be at least 8 characters.');
-  $('upBtn').disabled = true; msg('upMsg', '', 'Creating account…');
-  try { const r = await api('register', body); store.set(r.token); $('upPw').value = ''; await enter(true); }
+  $('upBtn').disabled = true; msg('upMsg', '', '');
+  try { const r = await api('register', body); store.set(r.token); await enter(true); }
   catch (err) { msg('upMsg', 'err', err.message); }
   finally { $('upBtn').disabled = false; }
 };
 
+// signed in
 let me = null, cdTimer = null, pollTimer = null;
-function fillList(id, rows, numbered) {
+function fill(id, rows, cls) {
   const el = $(id); el.innerHTML = '';
-  rows.forEach(([title, text], i) => {
-    const d = document.createElement('div'); d.className = 'item';
-    const n = document.createElement('div'); n.className = 'n'; n.textContent = numbered ? i + 1 : '■';
-    const t = document.createElement('div'); const b = document.createElement('b'); b.textContent = title;
-    const p = document.createElement('p'); p.textContent = text; t.append(b, p); d.append(n, t); el.append(d);
-  });
+  for (const [title, text] of rows) {
+    const d = document.createElement('div'); d.className = cls;
+    const b = document.createElement('b'); b.textContent = title;
+    const p = document.createElement('p'); p.textContent = text;
+    d.append(b, p); el.append(d);
+  }
 }
 function renderAccess() {
-  const t = $('toast'); t.innerHTML = ''; t.className = 'toast' + (me.whitelisted ? '' : ' pend');
-  const icon = document.createElement('div'); icon.className = 'ti';
-  const box = document.createElement('div'); const b = document.createElement('b'); const s = document.createElement('span');
-  if (me.whitelisted) { icon.textContent = '✔'; icon.style.color = 'var(--green)'; b.textContent = 'Advancement made!'; s.textContent = `Whitelisted: ${me.profile.mc} can join the server.`; }
-  else if (me.request === 'denied') { icon.textContent = '✖'; icon.style.color = 'var(--red)'; b.textContent = 'Request declined'; s.textContent = 'An admin declined this request. Reach out to them if you think that was a mistake.'; }
-  else { icon.textContent = '⌛'; icon.style.color = 'var(--gold)'; b.textContent = 'Not whitelisted yet'; s.textContent = "An admin has been pinged to approve you. This updates by itself, so you don't need to refresh."; }
-  box.append(b, s); t.append(icon, box);
+  const t = $('toast'); t.innerHTML = '';
+  const ic = document.createElement('div'); ic.className = 'ic';
+  const box = document.createElement('div'); const b = document.createElement('b'); const p = document.createElement('p');
+  if (me.whitelisted) { t.className = 'toast'; ic.textContent = '✅'; b.textContent = "You're whitelisted!"; p.textContent = `${me.profile.mc} can join the server now. Follow the steps below.`; }
+  else if (me.request === 'denied') { t.className = 'toast deny'; ic.textContent = '⛔'; b.textContent = 'Request declined'; p.textContent = 'An admin declined this request. Reach out to them if you think that was a mistake.'; }
+  else { t.className = 'toast pend'; ic.textContent = '⏳'; b.textContent = 'Not whitelisted yet'; p.textContent = "An admin has been pinged to approve you. This updates by itself, so you don't need to refresh."; }
+  box.append(b, p); t.append(ic, box);
 }
 async function enter(fresh) {
   const tok = store.get(); if (!tok) return showGate();
   try { me = await api('me', {}, tok); }
-  catch (e) { if (e.status === 401) { store.set(null); return showGate(); } $('loading').textContent = 'Could not reach the server. Try refreshing.'; return; }
+  catch (e) { if (e.status === 401) { store.set(null); return showGate(); } $('loading').textContent = 'CAN\'T REACH THE SERVER. TRY REFRESHING.'; return; }
   const c = me.content;
-  $('loading').classList.add('hidden'); $('gate').classList.add('hidden'); $('member').classList.remove('hidden');
+  $('loading').classList.add('hidden'); $('gate').classList.add('hidden');
+  $('hello').classList.remove('hidden'); $('member').classList.remove('hidden');
   $('whoName').textContent = `${me.profile.first} ${me.profile.last} · ${me.profile.mc}`;
-  $('nametag').textContent = me.profile.mc; loadSkin(me.profile.uuid.replace(/-/g, ''));
-  $('addr').textContent = c.address;
-  fillList('steps', c.steps, true); fillList('world', c.world, false); fillList('rules', c.rules, true);
+  $('welcome').textContent = ''; $('welcome').append('WELCOME,', document.createElement('br'), me.profile.first.toUpperCase());
+  $('nametag').textContent = me.profile.mc.toUpperCase(); loadSkin(me.profile.uuid.replace(/-/g, ''));
+  const steps = $('steps'); steps.innerHTML = '';
+  for (const [title, text] of c.steps) {
+    const d = document.createElement('div'); d.className = 'step';
+    const b = document.createElement('b'); b.textContent = title; const p = document.createElement('p'); p.textContent = text;
+    d.append(b, p); steps.append(d);
+  }
+  fill('world', c.world, 'c'); fill('rules', c.rules, 'c');
   renderAccess();
-  const s1 = new Date(c.season1);
-  clearInterval(cdTimer);
+  const s1 = new Date(c.season1); clearInterval(cdTimer);
   const tick = () => {
-    const t = Math.max(0, s1 - Date.now()) / 1000, p = (n) => String(Math.floor(n)).padStart(2, '0');
-    $('cdD').textContent = p(t / 86400); $('cdH').textContent = p(t % 86400 / 3600); $('cdM').textContent = p(t % 3600 / 60); $('cdS').textContent = p(t % 60);
+    const t = Math.max(0, s1 - Date.now()) / 1000, z = (n) => String(Math.floor(n)).padStart(2, '0');
+    $('cdD').textContent = z(t / 86400); $('cdH').textContent = z(t % 86400 / 3600); $('cdM').textContent = z(t % 3600 / 60); $('cdS').textContent = z(t % 60);
   };
   tick(); cdTimer = setInterval(tick, 1000);
   clearInterval(pollTimer);
@@ -345,24 +287,19 @@ async function enter(fresh) {
     try { const n = await api('me', {}, store.get()); if (n.whitelisted) { me = n; renderAccess(); wave(); clearInterval(pollTimer); } } catch {}
   }, 20000);
   status();
-  if (fresh || me.whitelisted) setTimeout(wave, 600);
+  if (fresh) setTimeout(wave, 500);
 }
 $('logout').onclick = async () => { try { await api('logout', {}, store.get()); } catch {} store.set(null); me = null; clearInterval(pollTimer); showGate(); };
-document.querySelectorAll('.tabs .btn').forEach((b) => b.onclick = () => {
-  document.querySelectorAll('.tabs .btn').forEach((x) => x.classList.toggle('on', x === b));
-  ['connect', 'world', 'rules'].forEach((t) => $('tab-' + t).classList.toggle('hidden', t !== b.dataset.tab));
-});
-$('copyBtn').onclick = async () => {
-  try { await navigator.clipboard.writeText(ADDR); $('copyBtn').textContent = 'Copied!'; } catch { $('copyBtn').textContent = 'Ctrl+C'; }
-  setTimeout(() => $('copyBtn').textContent = 'Copy', 1500);
+$('copy').onclick = async (e) => {
+  try { await navigator.clipboard.writeText(ADDR); e.target.textContent = 'COPIED'; } catch { e.target.textContent = 'CTRL+C'; }
+  setTimeout(() => e.target.textContent = 'COPY', 1500);
 };
 async function status() {
   try {
     const d = await (await fetch('https://api.mcsrvstat.us/3/' + ADDR, { cache: 'no-store' })).json();
-    $('bars').className = 'bars' + (d.online ? ' on' : '');
-    $('srvPl').textContent = d.online && d.players ? `${d.players.online}/${d.players.max}` : 'Offline';
-    $('srvVer').textContent = d.online ? (d.version || '') : 'Server is down right now';
-  } catch { $('srvPl').textContent = '?'; }
+    $('dot').className = 'dot ' + (d.online ? 'on' : 'off');
+    $('stext').textContent = d.online ? `Online · ${d.players ? d.players.online + '/' + d.players.max + ' playing' : ''}${d.version ? ' · ' + d.version : ''}` : 'Offline right now';
+  } catch { $('stext').textContent = 'Status unavailable'; }
 }
 setInterval(() => { if (me) status(); }, 60000);
 

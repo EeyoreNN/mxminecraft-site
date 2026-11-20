@@ -1,7 +1,7 @@
 // MX Minecraft API (Supabase Edge Function).
 // Members-only site: nothing but the login screen is public; member content comes from `me`.
-//   register {first,last,email,mc,password} -> {token}        (@mxschool.edu only; pings admin if not whitelisted)
-//   login    {email,password}               -> {token}
+//   register {first,last,email,mc}          -> {token}        (@mxschool.edu only; pings admin if not whitelisted)
+//   login    {email}                        -> {token}         (school email only, no password)
 //   me       (Authorization: Bearer token)   -> {profile, whitelisted, request, content}
 //   logout   (Authorization: Bearer token)   -> {ok}
 //   approve  GET ?token=..&deny=1            -> admin one-tap link from the ntfy push
@@ -53,26 +53,11 @@ function cors(req: Request) {
 const json = (req: Request, body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { ...cors(req), "Content-Type": "application/json" } });
 const hex = (b: ArrayBuffer | Uint8Array) => [...new Uint8Array(b)].map((x) => x.toString(16).padStart(2, "0")).join("");
-const b64 = (b: Uint8Array) => btoa(String.fromCharCode(...b));
-const unb64 = (s: string) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
 async function sha256(s: string) { return hex(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s))); }
 function safeEq(a: string, b: string) {
   if (a.length !== b.length) return false;
   let r = 0; for (let i = 0; i < a.length; i++) r |= a.charCodeAt(i) ^ b.charCodeAt(i);
   return r === 0;
-}
-const ITER = 210000;
-async function pbkdf2(pw: string, salt: Uint8Array, iter = ITER) {
-  const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(pw), "PBKDF2", false, ["deriveBits"]);
-  return new Uint8Array(await crypto.subtle.deriveBits({ name: "PBKDF2", hash: "SHA-256", salt, iterations: iter }, key, 256));
-}
-async function hashPw(pw: string) {
-  const salt = crypto.getRandomValues(new Uint8Array(16));
-  return `pbkdf2$${ITER}$${b64(salt)}$${b64(await pbkdf2(pw, salt))}`;
-}
-async function checkPw(pw: string, stored: string) {
-  const [, iter, salt, h] = stored.split("$");
-  return safeEq(b64(await pbkdf2(pw, unb64(salt), Number(iter))), h);
 }
 async function cfg(key: string) {
   const { data } = await db.from("app_config").select("value").eq("key", key).single();
@@ -188,11 +173,10 @@ Deno.serve(async (req) => {
 
     if (action === "register") {
       const first = clean(b.first), last = clean(b.last), mc = clean(b.mc, 16);
-      const email = clean(b.email, 120).toLowerCase(), pw = String(b.password ?? "");
+      const email = clean(b.email, 120).toLowerCase();
       if (!first || !last) return json(req, { error: "Enter your first and last name." }, 400);
       if (!EMAIL_RE.test(email)) return json(req, { error: "Use your @mxschool.edu email address." }, 400);
       if (!NAME_RE.test(mc)) return json(req, { error: "That isn't a valid Minecraft username." }, 400);
-      if (pw.length < 8 || pw.length > 200) return json(req, { error: "Password must be at least 8 characters." }, 400);
       const since = new Date(Date.now() - 3600e3).toISOString();
       const { count: recent } = await db.from("accounts").select("id", { count: "exact", head: true }).gte("created_at", since);
       if ((recent ?? 0) > 40) return json(req, { error: "Too many sign-ups right now. Try again later." }, 429);
@@ -213,19 +197,19 @@ Deno.serve(async (req) => {
         await pingAdmin(r);
       }
       const { data: acct, error: e2 } = await db.from("accounts").insert({
-        email, first_name: first, last_name: last, mc_name: p.name, mc_uuid: p.uuid, pw_hash: await hashPw(pw), request_id: requestId,
+        email, first_name: first, last_name: last, mc_name: p.name, mc_uuid: p.uuid, request_id: requestId,
       }).select("id").single();
       if (e2) throw e2;
       return json(req, { token: await newSession(acct.id) });
     }
 
     if (action === "login") {
-      const email = clean(b.email, 120).toLowerCase(), pw = String(b.password ?? "");
+      const email = clean(b.email, 120).toLowerCase();
+      if (!EMAIL_RE.test(email)) return json(req, { error: "Use your @mxschool.edu email address." }, 400);
       if (await tooManyFailures(email, ip)) return json(req, { error: "Too many attempts. Wait 15 minutes and try again." }, 429);
-      const { data: a } = await db.from("accounts").select("id, pw_hash").eq("email", email).maybeSingle();
-      const ok = a ? await checkPw(pw, a.pw_hash) : (await hashPw(pw), false); // equalize timing
-      await db.from("login_attempts").insert({ email, ip, ok });
-      if (!ok) return json(req, { error: "Wrong email or password." }, 401);
+      const { data: a } = await db.from("accounts").select("id").eq("email", email).maybeSingle();
+      await db.from("login_attempts").insert({ email, ip, ok: !!a });
+      if (!a) return json(req, { error: "No account with that email yet. Create one first." }, 404);
       return json(req, { token: await newSession(a!.id) });
     }
 
