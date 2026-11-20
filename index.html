@@ -222,7 +222,6 @@ footer{border-top:1px solid var(--line);padding:22px 16px;color:var(--muted);fon
 const ADDR = 'mxminecraft.net';
 const API = 'https://bdsdvogepvkvfjdohkbo.supabase.co/functions/v1/mx';
 const $ = (id) => document.getElementById(id);
-const STEVE = 'c06f89064c8a49119c29ea1dbd1aab82';
 let player = null, reqId = null, pollTimer = null, welcomeName = '';
 
 setInterval(() => $('clock').textContent = new Date().toISOString().slice(11, 19) + ' UTC', 1000);
@@ -238,18 +237,24 @@ try {
   viewer.autoRotate = true; viewer.autoRotateSpeed = 0.5;
   viewer.animation = new skinview3d.IdleAnimation();
   viewer.zoom = 0.82; viewer.fov = 55;
-  loadSkin(STEVE);
+  loadSkin(null);
   addEventListener('resize', () => viewer.setSize(c.clientWidth, c.clientHeight));
 } catch (e) { $('skin').style.display = 'none'; }
 
+let skinSeq = 0;
 async function loadSkin(uuid) {
   if (!viewer) return;
-  const url = `${API}?action=skin&uuid=${uuid}`;
-  try {
-    const r = await fetch(url); if (!r.ok) throw 0;
-    const model = r.headers.get('X-Skin-Model') === 'slim' ? 'slim' : 'default';
-    await viewer.loadSkin(url, { model });
-  } catch { try { await viewer.loadSkin(`https://minotar.net/skin/${player ? player.name : 'MHF_Steve'}`); } catch {} }
+  const seq = ++skinSeq;  // ignore slower, stale loads
+  const tries = uuid ? [`${API}?action=skin&uuid=${uuid}`, `https://minotar.net/skin/${uuid}`] : ['https://minotar.net/skin/MHF_Steve'];
+  for (const url of tries) {
+    try {
+      const r = await fetch(url); if (!r.ok) continue;
+      const model = r.headers.get('X-Skin-Model') === 'slim' ? 'slim' : 'default';
+      const blob = URL.createObjectURL(await r.blob());
+      if (seq !== skinSeq) return;
+      await viewer.loadSkin(blob, { model }); return;
+    } catch {}
+  }
 }
 function salute() {
   if (!viewer) return;
