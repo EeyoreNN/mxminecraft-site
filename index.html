@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -86,7 +86,7 @@ footer{border-top:2px solid var(--line);padding:24px 0;color:var(--muted);font-s
       <h1 class="pix" id="title">MX<br>MINECRAFT</h1>
       <p class="tag" id="tagline">The MX reunion server. It's vanilla survival with old friends, and you need an invite to join.</p>
       <div class="addr"><code>mxminecraft.net</code><button class="btn" id="copy" type="button">COPY</button></div>
-      <div><div class="status"><span class="dot" id="dot"></span><span id="stext">Checking serverâ€¦</span></div></div>
+      <div><div class="status"><span class="dot" id="dot"></span><span id="stext">Checking server…</span></div></div>
     </div>
     <div style="display:grid">
       <canvas id="skin" aria-label="3D Minecraft character"></canvas>
@@ -135,22 +135,22 @@ footer{border-top:2px solid var(--line);padding:24px 0;color:var(--muted);font-s
 
   <h2 class="pix">THE WORLD</h2>
   <div class="grid">
-    <div class="card"><div class="ic">ðŸŒ</div><b>Fresh vanilla seed</b><p>It's a brand-new world with no mods, no datapacks and no custom terrain. We won't share the seed, so it's all yours to explore.</p></div>
-    <div class="card"><div class="ic">ðŸ—ºï¸</div><b>Huge, pregenerated map</b><p>The Overworld is generated out to 10,000 blocks in every direction, so exploring stays smooth with no chunk-loading lag.</p></div>
-    <div class="card"><div class="ic">ðŸ”¥</div><b>Nether ready</b><p>The Nether is pregenerated too. Travel is fast, and you can build highways if you like.</p></div>
-    <div class="card"><div class="ic">ðŸ‰</div><b>The End awaits</b><p>No one has been there yet. The first expedition is up to the server.</p></div>
+    <div class="card"><div class="ic">🌍</div><b>Fresh vanilla seed</b><p>It's a brand-new world with no mods, no datapacks and no custom terrain. We won't share the seed, so it's all yours to explore.</p></div>
+    <div class="card"><div class="ic">🗺️</div><b>Huge, pregenerated map</b><p>The Overworld is generated out to 10,000 blocks in every direction, so exploring stays smooth with no chunk-loading lag.</p></div>
+    <div class="card"><div class="ic">🔥</div><b>Nether ready</b><p>The Nether is pregenerated too. Travel is fast, and you can build highways if you like.</p></div>
+    <div class="card"><div class="ic">🐉</div><b>The End awaits</b><p>No one has been there yet. The first expedition is up to the server.</p></div>
   </div>
 
   <h2 class="pix">RULES</h2>
   <div class="grid">
-    <div class="card"><div class="ic">ðŸ¤</div><b>Be cool</b><p>No griefing, stealing or harassment. Ask before you build right next to someone.</p></div>
-    <div class="card"><div class="ic">ðŸš«</div><b>No cheats</b><p>No x-ray, hacked clients or dupe exploits. Performance mods like Sodium, Iris and minimaps are fine.</p></div>
-    <div class="card"><div class="ic">âš™ï¸</div><b>Go easy on the server</b><p>No lag machines, and keep mega-farms reasonable. It runs on a home PC.</p></div>
-    <div class="card"><div class="ic">ðŸŽ“</div><b>MX only</b><p>Your access is for you. Don't share accounts. Friends can request their own access here.</p></div>
+    <div class="card"><div class="ic">🤝</div><b>Be cool</b><p>No griefing, stealing or harassment. Ask before you build right next to someone.</p></div>
+    <div class="card"><div class="ic">🚫</div><b>No cheats</b><p>No x-ray, hacked clients or dupe exploits. Performance mods like Sodium, Iris and minimaps are fine.</p></div>
+    <div class="card"><div class="ic">⚙️</div><b>Go easy on the server</b><p>No lag machines, and keep mega-farms reasonable. It runs on a home PC.</p></div>
+    <div class="card"><div class="ic">🎓</div><b>MX only</b><p>Your access is for you. Don't share accounts. Friends can request their own access here.</p></div>
   </div>
 </main>
 
-<footer>MX Minecraft Â· not affiliated with Mojang or Microsoft</footer>
+<footer>MX Minecraft · not affiliated with Mojang or Microsoft</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/skinview3d@3.1.0/bundles/skinview3d.bundle.js"></script>
 <script>
@@ -194,7 +194,7 @@ $('copy').onclick = async (e) => {
 async function status() {
   try {
     const d = await (await fetch('https://api.mcsrvstat.us/3/' + ADDR, { cache: 'no-store' })).json();
-    if (d.online) { $('dot').className = 'dot on'; $('stext').textContent = `Online Â· ${d.players ? d.players.online + '/' + d.players.max + ' playing' : ''}${d.version ? ' Â· ' + d.version : ''}`; }
+    if (d.online) { $('dot').className = 'dot on'; $('stext').textContent = `Online · ${d.players ? d.players.online + '/' + d.players.max + ' playing' : ''}${d.version ? ' · ' + d.version : ''}`; }
     else { $('dot').className = 'dot off'; $('stext').textContent = 'Offline right now'; }
   } catch { $('dot').className = 'dot'; $('stext').textContent = 'Status unavailable'; }
 }
@@ -220,13 +220,13 @@ function welcome(name) {
 }
 function allSet(name) {
   $('signup').classList.add('hidden'); $('codeBox').classList.add('hidden');
-  say('ok', "âœ… You're all set!", `${player.name} is on the whitelist. Follow the steps below to connect.`);
+  say('ok', "✅ You're all set!", `${player.name} is on the whitelist. Follow the steps below to connect.`);
   welcome(name); wave();
   setTimeout(() => $('connect').scrollIntoView(), 900);
 }
 function pending() {
   $('signup').classList.add('hidden'); $('codeBox').classList.add('hidden');
-  say('warn', "â³ You're not whitelisted yet. An admin has been pinged.",
+  say('warn', "⏳ You're not whitelisted yet. An admin has been pinged.",
       "We'll whitelist you as soon as an admin approves your request. You can leave this page open. It updates by itself, and it'll tell you when you're in.");
   clearInterval(pollTimer);
   pollTimer = setInterval(async () => {
