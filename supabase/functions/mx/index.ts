@@ -33,9 +33,9 @@ const CONTENT = {
     ["The End", "No one has been there yet. The first expedition is up to the server."],
   ],
   rules: [
-    ["Be decent", "No griefing, stealing or harassment. Ask before you build right next to someone."],
-    ["No cheats", "No x-ray, hacked clients or dupes. Sodium, Iris and minimaps are fine."],
-    ["Go easy on the server", "No lag machines, and keep mega-farms reasonable. It runs on a home PC."],
+    ["Anarchy", "PvP is on. Griefing, raiding and stealing are all fair game, so protect your stuff."],
+    ["No cheats", "No x-ray, hacked clients, dupes or exploits. That's the one rule. Sodium, Iris and minimaps are fine."],
+    ["No lag machines", "The server runs on a home PC. Don't build things meant to crash or lag it."],
     ["MX only", "Access is personal. Don't share accounts. Friends can sign up themselves."],
   ],
 };
