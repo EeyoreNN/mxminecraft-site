@@ -67,6 +67,11 @@ async function cfg(key: string) {
   const { data } = await db.from("app_config").select("value").eq("key", key).single();
   return data?.value as string;
 }
+// Rules/world text live in app_config key "content" (JSON) so they can change without a redeploy; CONTENT above is the fallback.
+async function getContent() {
+  try { const v = await cfg("content"); if (v) return { ...CONTENT, ...JSON.parse(v) }; } catch { /* use fallback */ }
+  return CONTENT;
+}
 const clean = (s: unknown, n = 40) => String(s ?? "").replace(/[\u0000-\u001f<>]/g, "").trim().slice(0, n);
 const dash = (id: string) => id.includes("-") ? id : `${id.slice(0, 8)}-${id.slice(8, 12)}-${id.slice(12, 16)}-${id.slice(16, 20)}-${id.slice(20)}`;
 
@@ -228,7 +233,7 @@ Deno.serve(async (req) => {
       }
       return json(req, {
         profile: { first: a.first_name, last: a.last_name, mc: a.mc_name, uuid: a.mc_uuid, email: a.email },
-        whitelisted, request, content: CONTENT,
+        whitelisted, request, content: await getContent(),
       });
     }
 
