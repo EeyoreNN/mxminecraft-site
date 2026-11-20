@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MX Minecraft</title>
+<meta name="description" content="MX Minecraft: a whitelisted vanilla Java server. Here's how to join.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' fill='%235d9b3a'/><rect y='10' width='16' height='6' fill='%23795436'/><rect x='3' y='12' width='2' height='2' fill='%23634329'/><rect x='10' y='13' width='2' height='2' fill='%23634329'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0f1410; --panel:#18201a; --panel2:#1f2a21; --line:#2c3a2e;
+  --text:#e8efe6; --muted:#9db09f; --grass:#6fbf3f; --grass-d:#4d8a2a;
+  --dirt:#7a5537; --gold:#f2c94c; --red:#e5534b;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font:16px/1.6 Inter,system-ui,sans-serif;min-height:100vh}
+a{color:var(--grass)}
+.wrap{max-width:880px;margin:0 auto;padding:0 16px}
+header{
+  background:
+    linear-gradient(180deg,rgba(15,20,16,.0) 60%,var(--bg)),
+    repeating-linear-gradient(90deg,#86c5ff 0 64px,#7dbcf7 64px 128px);
+  border-bottom:8px solid var(--grass-d);
+  box-shadow:inset 0 -24px 0 var(--dirt);
+  padding:72px 0 88px;text-align:center;
+}
+h1{font-family:'Press Start 2P',monospace;font-size:clamp(28px,7vw,56px);color:#fff;
+  text-shadow:4px 4px 0 #3a3a3a;letter-spacing:2px}
+.tag{margin-top:14px;font-weight:600;color:#1b2a1d;font-size:18px}
+.addr{margin:28px auto 0;display:inline-flex;gap:0;border:4px solid #1b1b1b;background:#2b2b2b;box-shadow:6px 6px 0 rgba(0,0,0,.35)}
+.addr code{font-family:'Press Start 2P',monospace;font-size:clamp(12px,3.4vw,18px);padding:16px 18px;color:#fff}
+.addr button{font-family:'Press Start 2P',monospace;font-size:12px;border:0;border-left:4px solid #1b1b1b;
+  background:var(--grass);color:#10240a;padding:0 16px;cursor:pointer}
+.addr button:hover{background:#82d64f}
+.status{margin:22px auto 0;display:inline-flex;align-items:center;gap:10px;background:rgba(0,0,0,.55);
+  padding:10px 16px;border-radius:999px;font-weight:600;color:#fff}
+.dot{width:12px;height:12px;border-radius:50%;background:#888;box-shadow:0 0 0 3px rgba(255,255,255,.08)}
+.dot.on{background:var(--grass);box-shadow:0 0 12px var(--grass)}
+.dot.off{background:var(--red)}
+main{padding:40px 0 64px}
+h2{font-family:'Press Start 2P',monospace;font-size:16px;color:var(--gold);margin:40px 0 18px}
+.steps{display:grid;gap:14px;counter-reset:s}
+.step{background:var(--panel);border:2px solid var(--line);padding:18px 18px 18px 72px;position:relative}
+.step::before{counter-increment:s;content:counter(s);position:absolute;left:18px;top:16px;width:38px;height:38px;
+  display:grid;place-items:center;font-family:'Press Start 2P',monospace;font-size:14px;background:var(--grass-d);color:#fff;border:2px solid #2c4d1a}
+.step b{display:block;font-size:17px;margin-bottom:2px}
+.step p{color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.card{background:var(--panel2);border:2px solid var(--line);padding:18px}
+.card b{display:block;margin-bottom:4px}
+.card p,.card li{color:var(--muted)}
+.card ul{padding-left:18px}
+footer{border-top:2px solid var(--line);padding:24px 0;color:var(--muted);font-size:14px;text-align:center}
+.kbd{font-family:ui-monospace,monospace;background:#0b0f0c;border:1px solid var(--line);padding:1px 6px}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>MX MINECRAFT</h1>
+    <p class="tag">Vanilla Java survival. No mods or pay-to-win, and the map is pregenerated so it doesn't lag.</p>
+    <div class="addr"><code id="ip">mxminecraft.net</code><button id="copy" type="button">COPY</button></div>
+    <div><div class="status" id="status"><span class="dot" id="dot"></span><span id="stext">Checking server…</span></div></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <h2>GET STARTED</h2>
+  <div class="steps">
+    <div class="step"><b>Get Minecraft: Java Edition</b><p>Open the launcher and play the latest release (26.3). Bedrock (console, phone, Windows Store version) can't join.</p></div>
+    <div class="step"><b>Get whitelisted</b><p>This server is invite-only. Send your exact Java username to Nick or an admin and wait until they say you've been added.</p></div>
+    <div class="step"><b>Add the server</b><p>Go to <span class="kbd">Multiplayer</span>, then <span class="kbd">Add Server</span>, and type <span class="kbd">mxminecraft.net</span> as the address. You don't need a port.</p></div>
+    <div class="step"><b>Join and play</b><p>Double-click MX Minecraft. If it says "not whitelisted", your name hasn't been added yet, so ask again.</p></div>
+  </div>
+
+  <h2>RULES</h2>
+  <div class="grid">
+    <div class="card"><b>Be cool</b><p>No griefing, stealing, or harassment. Build near people only if they're fine with it.</p></div>
+    <div class="card"><b>No cheats</b><p>No x-ray, hacked clients, or dupes. Performance mods like Sodium and Iris are fine.</p></div>
+    <div class="card"><b>Keep it fair</b><p>No lag machines. Keep giant farms reasonable so everyone can play.</p></div>
+  </div>
+
+  <h2>FAQ</h2>
+  <div class="grid">
+    <div class="card"><b>The status says offline</b><p>The server runs on a home PC and is sometimes down for updates. Check back later, or ask in the group chat.</p></div>
+    <div class="card"><b>"Outdated client/server"</b><p>Switch your launcher to the latest release. The badge above shows the server's version.</p></div>
+    <div class="card"><b>Where do I live?</b><p>The world is pregenerated out to 10,000 blocks, so you can pick a spot and settle.</p></div>
+  </div>
+</main>
+
+<footer>MX Minecraft · not affiliated with Mojang or Microsoft</footer>
+
+<script>
+const ADDR = 'mxminecraft.net';
+document.getElementById('copy').onclick = async (e) => {
+  try { await navigator.clipboard.writeText(ADDR); e.target.textContent = 'COPIED'; }
+  catch { e.target.textContent = 'CTRL+C'; }
+  setTimeout(() => e.target.textContent = 'COPY', 1600);
+};
+async function check(){
+  const dot = document.getElementById('dot'), t = document.getElementById('stext');
+  try {
+    const r = await fetch('https://api.mcsrvstat.us/3/' + ADDR, {cache:'no-store'});
+    const d = await r.json();
+    if (d.online) {
+      dot.className = 'dot on';
+      const p = d.players ? `${d.players.online}/${d.players.max} online` : 'Online';
+      t.textContent = `Online · ${p}` + (d.version ? ` · ${d.version}` : '');
+    } else { dot.className = 'dot off'; t.textContent = 'Offline right now'; }
+  } catch { dot.className = 'dot'; t.textContent = 'Status unavailable'; }
+}
+check(); setInterval(check, 60000);
+</script>
+</body>
+</html>
