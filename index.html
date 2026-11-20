@@ -73,6 +73,35 @@ h1 .g{color:var(--g)}
 .frame .tl,.frame .br{position:absolute;font-size:11px;letter-spacing:.14em;color:var(--g);pointer-events:none}
 .frame .tl{top:10px;left:14px} .frame .br{bottom:10px;right:14px;text-align:right}
 .frame .br b{display:block;font-size:16px;color:#eaffde}
+.frame .br{bottom:58px}
+/* Iron-Man-style holo HUD, in our palette */
+.holo{position:absolute;left:50%;top:46%;width:min(92%,420px);aspect-ratio:1;transform:translate(-50%,-50%);pointer-events:none;opacity:.9}
+.holo circle{fill:none}
+.holo .tk{stroke:var(--g);stroke-opacity:.35;stroke-width:6;stroke-dasharray:1 7.5}
+.holo .arc{stroke:var(--g);stroke-width:2.5;stroke-linecap:butt;filter:drop-shadow(0 0 4px rgba(147,255,74,.7))}
+.holo .a1{stroke-dasharray:180 826} .holo .a2{stroke-dasharray:60 946;stroke-dashoffset:-420;stroke:var(--amber)}
+.holo .a3{stroke-dasharray:110 644;stroke-opacity:.8}
+.holo .dash{stroke:var(--gdim);stroke-width:1;stroke-dasharray:14 6}
+.holo .tick{stroke:var(--g);stroke-width:2}
+.holo g{transform-origin:200px 200px}
+.holo .r1{animation:spin 60s linear infinite}
+.holo .r2{animation:spin 14s linear infinite}
+.holo .r3{animation:spin 40s linear infinite reverse}
+.holo .r4{animation:spin 9s linear infinite reverse}
+@keyframes spin{to{transform:rotate(360deg)}}
+.frame.lock .holo .r2{animation-duration:3s} .frame.lock .holo .r4{animation-duration:2s}
+.frame.lock .holo .arc{stroke:var(--g)}
+.callout{position:absolute;font-size:10px;letter-spacing:.16em;color:var(--muted);display:flex;align-items:center;gap:6px;pointer-events:none;opacity:0;transition:opacity .6s}
+.frame.on .callout{opacity:1}
+.callout i{display:block;height:1px;width:46px;background:linear-gradient(90deg,transparent,var(--g))}
+.callout b{color:var(--g);font-weight:600}
+.callout span{border:1px solid var(--line2);background:rgba(7,9,8,.75);padding:3px 7px}
+.co1{top:21%;left:58%} .co2{top:46%;left:62%} .co3{top:66%;left:6%;flex-direction:row-reverse}
+.co3 i{background:linear-gradient(270deg,transparent,var(--g))}
+.subtitle{position:absolute;left:12px;right:12px;bottom:12px;border:1px solid var(--line2);border-left:3px solid var(--g);background:rgba(7,9,8,.82);padding:8px 12px;font-size:13px;color:#eaffde;min-height:38px;display:flex;align-items:center;gap:10px}
+.subtitle .who{font-size:10px;letter-spacing:.2em;color:#071006;background:var(--g);padding:1px 6px;font-weight:800;flex:none}
+.subtitle .cur{color:var(--g);animation:blink 1s steps(1) infinite}
+@media (max-width:820px){.callout{display:none}}
 
 .cd{margin-top:22px;max-width:520px;border:1px solid var(--amber);background:rgba(255,182,39,.04)}
 .cd .top{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-bottom:1px solid rgba(255,182,39,.35);font-size:11px;letter-spacing:.2em}
@@ -152,10 +181,21 @@ footer{border-top:1px solid var(--line);padding:22px 16px;color:var(--muted);fon
     </div>
   </div>
   <div class="frame">
+    <svg class="holo" viewBox="0 0 400 400" aria-hidden="true">
+      <g class="r1"><circle cx="200" cy="200" r="182" class="tk"/></g>
+      <g class="r2"><circle cx="200" cy="200" r="160" class="arc a1"/><circle cx="200" cy="200" r="160" class="arc a2"/></g>
+      <g class="r3"><circle cx="200" cy="200" r="138" class="dash"/></g>
+      <g class="r4"><circle cx="200" cy="200" r="120" class="arc a3"/></g>
+      <path d="M200 6v14M200 380v14M6 200h14M380 200h14" class="tick"/>
+    </svg>
     <canvas id="skin" aria-label="3D Minecraft character"></canvas>
     <div class="cross"></div><div class="scan"></div><span class="c2"></span><span class="c3"></span>
-    <div class="tl">&#9673; OPERATOR SCAN</div>
+    <div class="tl">&#9673; OPERATOR SCAN <span class="m" id="pct">000%</span></div>
+    <div class="callout co1"><i></i><span>HEAD // <b id="coHead">SCANNING</b></span></div>
+    <div class="callout co2"><i></i><span>MODEL // <b id="coModel">----</b></span></div>
+    <div class="callout co3"><i></i><span>ID // <b id="coId">--------</b></span></div>
     <div class="br"><span id="clr">CLEARANCE: PENDING</span><b id="nametag">UNIDENTIFIED</b></div>
+    <div class="subtitle"><span class="who">MX-AI</span><span id="sub"></span><span class="cur">▌</span></div>
   </div>
 </header>
 
@@ -273,6 +313,7 @@ async function loadSkin(uuid) {
       const model = r.headers.get('X-Skin-Model') === 'slim' ? 'slim' : 'default';
       const blob = URL.createObjectURL(await r.blob());
       if (seq !== skinSeq) return;
+      if (uuid) $('coModel').textContent = model === 'slim' ? 'SLIM' : 'CLASSIC';
       await viewer.loadSkin(blob, { model }); return;
     } catch {}
   }
@@ -299,6 +340,44 @@ async function status() {
 }
 status(); setInterval(status, 60000);
 
+// AI subtitle: types one line at a time, like a suit HUD talking to you
+let subQ = [], subBusy = false, subGen = 0, idleTimer = null, lastStatus = null;
+function speak(lines, interrupt = true) {
+  if (interrupt) { subQ = []; subGen++; subBusy = false; }
+  subQ.push(...[].concat(lines));
+  if (!subBusy) nextSub();
+}
+async function nextSub() {
+  if (!subQ.length) { subBusy = false; return; }
+  subBusy = true; const gen = subGen;
+  const line = subQ.shift(), el = $('sub'); el.textContent = '';
+  for (const ch of line) { if (gen !== subGen) return; el.textContent += ch; await new Promise(r => setTimeout(r, 22)); }
+  await new Promise(r => setTimeout(r, 2600));
+  if (gen === subGen) nextSub();
+}
+function idleLines() {
+  const t = Math.max(0, SEASON1 - Date.now()), d = Math.floor(t / 864e5), h = Math.floor(t % 864e5 / 36e5);
+  const pl = $('sPl').textContent, on = $('sOn').textContent;
+  return [
+    'Systems online. Awaiting operator identification.',
+    on === 'ONLINE' ? `Uplink stable. ${pl.split('/')[0]} of ${pl.split('/')[1] || '12'} personnel currently deployed.` : 'Server uplink is offline. Stand by.',
+    t ? `Pre-season is open. Season 1 launches in ${d} days, ${h} hours.` : 'Season 1 is live. Good hunting.',
+    'Enter your callsign below to request clearance.',
+  ];
+}
+function idleLoop() { if (!player) speak(idleLines(), false); idleTimer = setTimeout(idleLoop, 22000); }
+setTimeout(idleLoop, 1400);
+function scanTo(target) {  // animated scan percentage in the frame
+  let p = 0; const el = $('pct');
+  const iv = setInterval(() => { p = Math.min(target, p + 4); el.textContent = String(p).padStart(3, '0') + '%'; if (p >= target) clearInterval(iv); }, 30);
+}
+scanTo(37);
+function identify(r) {
+  $('skin').closest('.frame').classList.add('on');
+  $('coHead').textContent = 'LOCKED'; $('coId').textContent = r.uuid.slice(0, 8).toUpperCase();
+  scanTo(100);
+}
+
 function say(kind, title, text) {
   const m = $('msg'); m.className = `msg show ${kind}`; m.innerHTML = '';
   const b = document.createElement('b'); b.textContent = title; m.append(b);
@@ -317,11 +396,14 @@ function allSet(name) {
   $('title').textContent = 'WELCOME,'; $('title').append(document.createElement('br'));
   const s = document.createElement('span'); s.className = 'g'; s.textContent = player.name.toUpperCase(); $('title').append(s);
   $('tagline').textContent = (name ? name + ', you' : 'You') + "'re cleared to deploy. See you on the server.";
+  $('skin').closest('.frame').classList.add('lock');
+  speak([`Welcome, ${name || player.name}. Clearance verified.`, 'You are cleared to deploy. Server address: mxminecraft.net.', 'Mission briefing loaded below. See you out there.']);
   salute(); setTimeout(() => $('connect').scrollIntoView(), 1200);
 }
 function pending() {
   $('signup').classList.add('hidden'); $('codeBox').classList.add('hidden');
   $('clr').textContent = 'CLEARANCE: PENDING'; $('clr').className = 'a';
+  speak(['Request logged. Notifying command.', 'Stand by. This page will update the moment you are cleared.']);
   say('warn', "▲ You're not whitelisted yet. An admin has been pinged.",
     "Your request is in the queue. Leave this page open: it refreshes by itself and will show when you're cleared.");
   clearInterval(pollTimer);
@@ -334,12 +416,13 @@ $('checkBtn').onclick = async () => {
   const mc = $('mc').value.trim();
   if (!/^[A-Za-z0-9_]{3,16}$/.test(mc)) return say('err', 'Invalid callsign', 'Minecraft names are 3 to 16 letters, numbers or underscores.');
   $('checkBtn').disabled = true;
+  speak(`Running identity check on ${mc}...`);
   try {
     const r = await api('check', { mc });
-    if (!r.exists) return say('err', 'No such account', "There's no Java Edition account with that name. Check the spelling.");
-    player = r; $('nametag').textContent = r.name.toUpperCase(); loadSkin(r.uuid.replace(/-/g, ''));
+    if (!r.exists) { speak('No record of that callsign in the Mojang registry.'); return say('err', 'No such account', "There's no Java Edition account with that name. Check the spelling."); }
+    player = r; identify(r); $('nametag').textContent = r.name.toUpperCase(); loadSkin(r.uuid.replace(/-/g, ''));
     if (r.whitelisted) allSet();
-    else { $('msg').className = 'msg'; $('clr').textContent = 'CLEARANCE: NONE'; $('clr').className = 'a'; $('signup').classList.remove('hidden'); $('first').focus(); }
+    else { $('msg').className = 'msg'; $('clr').textContent = 'CLEARANCE: NONE'; $('clr').className = 'a'; $('signup').classList.remove('hidden'); $('first').focus(); speak(['Callsign recognized. No clearance on file.', 'Provide your name and MX email to request access.']); }
   } catch (e) { say('err', 'Error', e.message); }
   finally { $('checkBtn').disabled = false; }
 };
